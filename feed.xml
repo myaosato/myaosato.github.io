@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+<title>MYAO's WEBSITE</title>
+<link href="http://myao.information.jp/"/>
+<id>urn:uuid:82018680-b83e-11e6-a22a-502da200d5c2</id>
+<updated>2017-09-20T20:58:47.604146+09:00</updated>
+<author>
+<name>Satoaki Miyao</name>
+</author>
+<entry>
+<title>英語に慣れない</title>
+<link href="http://myao.information.jp/20170419.htm"/>
+<id>urn:uuid:51ab354a-f074-49a1-937a-289cbcd1ae79</id>
+<updated>2017-04-19T21:49:48.597109+09:00</updated>
+<summary>昼休みがつらいんです。</summary>
+</entry>
+<entry>
+<title>テストの代わりとしてはお粗末だ</title>
+<link href="http://myao.information.jp/20170420.htm"/>
+<id>urn:uuid:1d828c85-e33a-4add-963b-4ec61fa05d11</id>
+<updated>2017-04-20T21:20:00.153786+09:00</updated>
+<summary>テストの代わりとしてはお粗末な更新</summary>
+</entry>
+<entry>
+<title>関西Lispユーザ会で発表してきました</title>
+<link href="http://myao.information.jp/20170423.htm"/>
+<id>urn:uuid:bd35c4d9-b85d-410f-96d0-b142adaf5fad</id>
+<updated>2017-04-23T20:23:22.625708+09:00</updated>
+<summary>I'm very sleepy. X(</summary>
+</entry>
+<entry>
+<title>体がかゆいです。</title>
+<link href="http://myao.information.jp/20170424.htm"/>
+<id>urn:uuid:9a7b923a-aaff-4c21-9b59-0de575175ea2</id>
+<updated>2017-04-24T21:34:08.910193+09:00</updated>
+<summary>今後rosaを使っていこうかなという話</summary>
+</entry>
+<entry>
+<title>人生大体思うようには行かないけど予定は立てるよね</title>
+<link href="http://myao.information.jp/20170429.htm"/>
+<id>urn:uuid:d8126b6e-2cca-4d56-9306-a075193299f2</id>
+<updated>2017-04-29T18:14:18.085209+09:00</updated>
+<summary>思うように行かなくても満足できるように生きるためにはどうすればいいんでしょうかねということを含んでいるかもしれない日記</summary>
+</entry>
+<entry>
+<title>４月末ですが、取り立てて何かまとめるようなこともありませんね。</title>
+<link href="http://myao.information.jp/20170430.htm"/>
+<id>urn:uuid:778a2fc8-621e-4b0a-9572-36eb5ab11e2c</id>
+<updated>2017-04-30T13:57:21.920374+09:00</updated>
+<summary>なぜ人はフライドポテトを食べてくなるのだろうという問いには答えられませんでした</summary>
+</entry>
+<entry>
+<title>お仕事論的なことを書こうかと思ったが、言うほど仕事してないわ僕</title>
+<link href="http://myao.information.jp/20170501.htm"/>
+<id>urn:uuid:71c0fe29-b535-4110-9515-f92bc0c134a7</id>
+<updated>2017-05-01T21:12:38.203449+09:00</updated>
+<summary>一生懸命、なにか書かなきゃと思ったが、誰に向けて何を書いているのかわからないような記事になってしまった。</summary>
+</entry>
+<entry>
+<title>気楽に出来るということはいいことだ</title>
+<link href="http://myao.information.jp/20170502.htm"/>
+<id>urn:uuid:dcdbb73b-9b13-44c8-9e5b-878cff017963</id>
+<updated>2017-05-02T21:21:24.145274+09:00</updated>
+<summary>好きなことをして生きていこうよ</summary>
+</entry>
+<entry>
+<title>FF8を進めてました。</title>
+<link href="http://myao.information.jp/20170503.htm"/>
+<id>urn:uuid:730ae818-af0f-46a3-9bc2-9f55286d4755</id>
+<updated>2017-05-03T16:52:56.373891+09:00</updated>
+<summary>FF8を進めました</summary>
+</entry>
+<entry>
+<title>あずまんが大王の大阪かわいい</title>
+<link href="http://myao.information.jp/20170505.htm"/>
+<id>urn:uuid:b9f12d5c-e947-4aa3-94e5-c3b7024a0a91</id>
+<updated>2017-05-05T06:00:47.419712+09:00</updated>
+<summary>大阪それは故郷</summary>
+</entry>
+<entry>
+<title>文字コードのことを考えねばなぁ</title>
+<link href="http://myao.information.jp/20170506.htm"/>
+<id>urn:uuid:dc01a0bc-94ab-4721-9787-be073b4281c1</id>
+<updated>2017-05-06T20:13:30.415237+09:00</updated>
+<summary>文字コードのことを忘れていたことに気づく。</summary>
+</entry>
+<entry>
+<title>連休最終日</title>
+<link href="http://myao.information.jp/20170507.htm"/>
+<id>urn:uuid:11c5ea73-645a-485f-91f0-2ef4a58b90d8</id>
+<updated>2017-05-07T08:32:09.621870+09:00</updated>
+<summary>ゲームする時間を確保することが難しい</summary>
+</entry>
+<entry>
+<title>OSどうしようかしら問題</title>
+<link href="http://myao.information.jp/20170509.htm"/>
+<id>urn:uuid:1029e434-3764-4454-9ed9-74bb236c94a4</id>
+<updated>2017-05-09T20:39:37.441408+09:00</updated>
+<summary>次も多分Ubuntuだろう</summary>
+</entry>
+<entry>
+<title>お疲れでございます。</title>
+<link href="http://myao.information.jp/20170510.htm"/>
+<id>urn:uuid:320416dc-4a7a-442d-9100-d27924c5ef4a</id>
+<updated>2017-05-10T20:52:22.781540+09:00</updated>
+<summary>お疲れです。</summary>
+</entry>
+<entry>
+<title>ニセ科学とニセ数学</title>
+<link href="http://myao.information.jp/20170511.htm"/>
+<id>urn:uuid:6667fd14-0ca5-4996-9841-89c056594eeb</id>
+<updated>2017-05-11T21:33:25.089023+09:00</updated>
+<summary>ニセ科学とニセ数学について</summary>
+</entry>
+<entry>
+<title>新しいPCが届きました</title>
+<link href="http://myao.information.jp/20170513.htm"/>
+<id>urn:uuid:35c008d5-cfcc-497e-966c-fbbe6f07eba5</id>
+<updated>2017-05-13T00:24:09.039596+09:00</updated>
+<summary>新しいPCをお迎えしまいた。</summary>
+</entry>
+<entry>
+<title>さっそくPCが立ち上がらなくなりました。</title>
+<link href="http://myao.information.jp/20170513-1.htm"/>
+<id>urn:uuid:312a3376-c85a-41a6-968e-b0a1bac7615e</id>
+<updated>2017-05-13T22:05:50.639923+09:00</updated>
+<summary>早速、動かんようになった</summary>
+</entry>
+<entry>
+<title>お出かけしていました。</title>
+<link href="http://myao.information.jp/20170514.htm"/>
+<id>urn:uuid:b1c90296-b9de-4e41-9776-14cb0ec67ad6</id>
+<updated>2017-05-14T20:51:52.231417+09:00</updated>
+<summary>バッテリ調査兼お出かけ</summary>
+</entry>
+<entry>
+<title>体痛い</title>
+<link href="http://myao.information.jp/20170515.htm"/>
+<id>urn:uuid:b541f08d-8fc5-42ba-9975-ba8d299ade2f</id>
+<updated>2017-05-15T20:22:23.802162+09:00</updated>
+<summary>体痛い</summary>
+</entry>
+<entry>
+<title>お昼休みつらい</title>
+<link href="http://myao.information.jp/20170516.htm"/>
+<id>urn:uuid:5bf7048a-2c57-48c2-9770-3db736a9509b</id>
+<updated>2017-05-16T20:41:42.144610+09:00</updated>
+<summary>お昼休みがつらいです。</summary>
+</entry>
+<entry>
+<title>半年くらい休みたい。</title>
+<link href="http://myao.information.jp/20170517.htm"/>
+<id>urn:uuid:b11bda9f-1041-476c-915c-426941a8a9d2</id>
+<updated>2017-05-17T20:49:52.845922+09:00</updated>
+<summary>いつものごとく愚痴</summary>
+</entry>
+<entry>
+<title>すぐにモノを忘れてしまう。 </title>
+<link href=""http://myao.information.jp/"/20170522.htm"/>
+<id>urn:uuid:82d8b0e9-850d-4538-9d6c-0a06741dc782</id>
+<updated>2017-05-22T21:27:43.537197+09:00</updated>
+<summary>何を書こうとしていたかすぐ忘れてしまう。</summary>
+</entry>
+<entry>
+<title>テストの書き方がわからない</title>
+<link href=""http://myao.information.jp/"/20170523.htm"/>
+<id>urn:uuid:f27ebd2f-ecee-40ac-9484-030cb7a071a7</id>
+<updated>2017-05-23T20:04:58.875605+09:00</updated>
+<summary>暑いと体が痒い</summary>
+</entry>
+<entry>
+<title>予定が埋まっていく</title>
+<link href=""http://myao.information.jp/"/20170524.htm"/>
+<id>urn:uuid:c1f062ec-32b6-4bce-9462-593218ca140a</id>
+<updated>2017-05-24T21:21:43.916133+09:00</updated>
+<summary>休日が充実している。</summary>
+</entry>
+<entry>
+<title>机が欲しい。</title>
+<link href=""http://myao.information.jp/"/20170526.htm"/>
+<id>urn:uuid:a22a99de-a28d-4d4d-9117-d4f75e4ae45a</id>
+<updated>2017-05-26T20:54:30.586533+09:00</updated>
+<summary>つくえがほしい</summary>
+</entry>
+<entry>
+<title>いつものごとく。とりとめのない話を</title>
+<link href=""http://myao.information.jp/"/20170529.htm"/>
+<id>urn:uuid:fb6cc7cf-8b1b-4135-973c-2154ae9ed8d4</id>
+<updated>2017-05-29T20:39:52.386880+09:00</updated>
+<summary>要注意のサインが出ている気がしなくもない</summary>
+</entry>
+<entry>
+<title>疲れているのよ</title>
+<link href=""http://myao.information.jp/"/20170531.htm"/>
+<id>urn:uuid:a3b8b621-0f12-4316-922d-a0e7c36e72c8</id>
+<updated>2017-05-31T20:13:50.952966+09:00</updated>
+<summary>疲れているのよ</summary>
+</entry>
+<entry>
+<title>嘘をつくという表現について</title>
+<link href=""http://myao.information.jp/"/20170602.htm"/>
+<id>urn:uuid:dc48466b-be08-458e-9932-fc2c40dc192b</id>
+<updated>2017-06-02T20:52:45.697228+09:00</updated>
+<summary>嘘をつくという表現について</summary>
+</entry>
+<entry>
+<title>取捨選択</title>
+<link href=""http://myao.information.jp/"/20170604.htm"/>
+<id>urn:uuid:a855be02-5d3f-4bd4-9a46-89c336e34cb0</id>
+<updated>2017-06-04T20:47:44.247185+09:00</updated>
+<summary>何を指定来ていくんだろうか</summary>
+</entry>
+<entry>
+<title>最近、読書している。</title>
+<link href=""http://myao.information.jp/"/20170607.htm"/>
+<id>urn:uuid:54e41726-38d8-4a92-9415-6a2cbdcafe30</id>
+<updated>2017-06-07T20:46:29.893077+09:00</updated>
+<summary>通勤電車の中で、不完全性定理を読んでおります。</summary>
+</entry>
+<entry>
+<title>手がべたつく</title>
+<link href=""http://myao.information.jp/"/20170612.htm"/>
+<id>urn:uuid:8bea1e77-a602-4f5a-91ef-af109d4c4a67</id>
+<updated>2017-06-12T20:55:26.528147+09:00</updated>
+<summary>疲れてるんやろうか</summary>
+</entry>
+<entry>
+<title>久しぶりの更新</title>
+<link href=""http://myao.information.jp/"/20170702.htm"/>
+<id>urn:uuid:2bde84ea-63b4-40b4-9979-f9fe28cff467</id>
+<updated>2017-07-02T16:04:13.276140+09:00</updated>
+<summary>久しぶりに更新しました。ちっちゃい愚痴とか</summary>
+</entry>
+<entry>
+<title>何かを忘れてしまったような日々</title>
+<link href=""http://myao.information.jp/"/20170704.htm"/>
+<id>urn:uuid:bb901155-e448-4bc2-98b3-b4a0c1c10c33</id>
+<updated>2017-07-04T19:58:10.436607+09:00</updated>
+<summary>ぼやきです。</summary>
+</entry>
+<entry>
+<title>JuliaでLispを書いた話</title>
+<link href=""http://myao.information.jp/"/20170729.htm"/>
+<id>urn:uuid:bb97f673-41d6-40d9-9dd8-d52027e1ce2d</id>
+<updated>2017-07-29T09:55:27.193818+09:00</updated>
+<summary>JuliaでLispを実装したよ</summary>
+</entry>
+<entry>
+<title>悩み多きこの夏</title>
+<link href=""http://myao.information.jp/"/20170827.htm"/>
+<id>urn:uuid:569f6acd-20b9-4d28-8230-6f8ef72915d5</id>
+<updated>2017-08-27T17:43:46.389258+09:00</updated>
+<summary>憂鬱なときもあるよね。</summary>
+</entry>
+<entry>
+<title>疲れるのんは、どうしようもないですな</title>
+<link href="http://myao.information.jp/20170918.htm"/>
+<id>urn:uuid:a1c5f8dd-4957-48a7-b110-6faae3177729</id>
+<updated>2017-09-18T10:53:53.954429+09:00</updated>
+<summary>疲れるよね。</summary>
+</entry>
+<entry>
+<title>久しぶりの職場</title>
+<link href="http://myao.information.jp/20170919.htm"/>
+<id>urn:uuid:1acd28ea-fde9-4056-9df2-0faea2736128</id>
+<updated>2017-09-19T22:24:01.410335+09:00</updated>
+<summary>言い訳だらけの人生だなぁとやや凹む</summary>
+</entry>
+<entry>
+<title>リーダブルコード読みました。</title>
+<link href="http://myao.information.jp/20170920.htm"/>
+<id>urn:uuid:7af7c96c-8df0-4673-a7c7-0b79c945bf6d</id>
+<updated>2017-09-20T20:58:47.604146+09:00</updated>
+<summary>白い目で見られたくないでござる。</summary>
+</entry>
+</feed>

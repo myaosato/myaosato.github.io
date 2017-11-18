@@ -1,0 +1,39 @@
+%!PS-Adobe-3.0
+%% PgaeSize [200 200]
+%% BoundingBox: 200 365 350 480
+/hex {
+newpath
+2 copy moveto
+2 index
+0 exch rmoveto
+-30 rotate 2 index 0 rlineto
+-60 rotate 2 index 0 rlineto
+-60 rotate 2 index 0 rlineto
+-60 rotate 2 index 0 rlineto
+-60 rotate 2 index 0 rlineto
+closepath
+-90 rotate
+stroke
+} def
+/hexs {
+20 20 20 hex
+20 20 20 30 cos mul 2 mul add 20 hex
+20 20 20 30 cos mul 4 mul add 20 hex
+20 20 20 30 cos mul 6 mul add 20 hex
+20 20 20 30 cos mul 8 mul add 20 hex
+} def
+gsave
+hexs
+30 cos 20 mul 20 1.5 mul translate
+hexs
+30 cos -20 mul 20 1.5 mul translate
+hexs
+30 cos 20 mul 20 1.5 mul translate
+hexs
+30 cos -20 mul 20 1.5 mul translate
+hexs
+30 cos 20 mul 20 1.5 mul translate
+hexs
+
+showpage
+grestore

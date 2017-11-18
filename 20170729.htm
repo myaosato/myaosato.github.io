@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width = device-width, initial-scale = 1, user-scalable = yes">
+<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="alternate" type="application/atom+xml" title="Atom 1.0" href="feed.xml">
+<title>MYAO's WEBSITE - JuliaでLispを書いた話</title>
+</head>
+<body>
+<header id="main-header">
+<h1><a href="index.htm">MYAO's WEBSITE</a></h1>
+</header>
+<main>
+<header id="article-header">
+<div id="date">2017-07-29</div>
+<h2 id="title">JuliaでLispを書いた話</h2>
+</header>
+<div id="article-main">
+<p>どうにも、Emacsの調子が悪くて、さっきから二度ほど固まったので、どこまで書く気力が続くがわからないけれど、書いていく。 </p><p>まとめ的なものは、また別のところで書くかもしれない。今回のは感想的なものと思ってほしい。まあ、どっちにしてもそんな感じだろうというのは、まあ。 </p><p>最近<a href="https://julialang.org/">Julia</a>でLisp(純Lispっぽいもの)を書いた。出来上がったものは、(こちら)[https://github.com/myaosato/my-first-lisp]に置いてある。GCとか自分で書いてないし、多分にバグだらけだけれど、まあ。 </p><p>なぜJuliaかというと、Juliaには前から興味があって、触っておこうと思いつつホントに触れる程度(REPLで電卓に毛が生えた程度のことをする)だった状態だった。Lispを書いてみようと思って、Twitter上でどうしましょかねみたいなことを言っていたら、Juliaはどうですかと薦めてくださったので、ではJuliaでという流れ。まあ、何も考えずに書いたが、Juliaのことをもっと知った上で、もうちょっとマシなものをって話はこの先出てくるかもしれない。(かもしれない。) </p><p>さて、今回は、特に何か教本的なものを参考にするというようなことはやめて、自分で勝手に楽しむというコンセプトで作ってる。まあ、そりゃ、効率甚だしく悪いバグモリモリなものなら書けるだろうからなぁということは有ったが、まあ、何かを覚えるということよりも、最初の一歩目ということを重視した。まあ、言い訳。なお、バグモリモリ動向の前に、例外処理を一切していない。ごめんよ。 </p><p>しんどいというか、詰まるほどではないにせよって部分は、まあ、文字列をS式ってかリストにパースするようなところで、なんとなくどうにもうまく書けた気がしない。開きカッコや閉じカッコや、シンボル、.、空白なんかの単位で読み込んでいって、CONSセルを作って、まずCAR側詰め込む。終端に達したら、(再帰で書いているので)戻ってきてCDR側で同じことをする。シンボルならシンボルを作る。まあ、ざっくり言うとこんな感じなんだけど、最後? までうまく出来ていなかった。もうちょっとわかりやすくなると思うんだけれどなぁ。このあたりは形式的な勉強をちゃんとした方がいいなぁと思う。 </p><p>もう一つ、考えたのはLAMBDAをどうするかということ、まあ、本体はS式として保存しとけば良いやって思ってたので、そのとおりにした。環境というのか、まあ変数と引数の類をどうするかってことで、とりあえず、引数一覧とLAMBDAが評価される時のグローバルでない変数(辞書型の配列を使って管理している)を保持する。LAMBDAで作られたオブジェクトが評価される時には、現状のグローバルでない変数を退避させておいて、オブジェクトに保持していたグローバルでない変数達を読み込み直して、引数に値をくっつけて、それもグローバルでない変数として配列に加える。グローバルでない変数はこの方法でのみ生み出されるということにしている。一応、これでレキシカルスコープになると思うんだけれど、違うのだろうか。グローバルじゃなくてダイナミックと呼ぶほうが良いのかもしれない。なんかそのあたりまだ完全には分かってない。とりあえず、それっぽく動いた。 </p><p>一応、実装したのはCONS CAR CDR QUOTE IF DEF(変数の宣言) SET(再束縛) LAMBDA EVAL 書いてて、ATOMないわってことに気づく。数値とかは扱っていない。Symbolそのものと、リストは扱える。まあ、そんなところ。 </p><p>とりあえず、次に行けばいいかと思ってたが、ATOM実装していないのはなぁと思ったので、もう少し書くかも。 </p>
+</div>
+<footer id="article-footer">
+UP: <a href="diary.htm">日記</a>
+PREV: <a href="20170704.htm">何かを忘れてしまったような日々</a>
+NEXT: <a href="20170827.htm">悩み多きこの夏</a>
+</footer>
+</main>
+<footer id="main-footer">
+<div id="icons"><a href="feed.xml"><img src="img/feed.png" alt="feed.xml" class="icon-img"></a>
+<a href="https://twitter.com/myao_s_moking"><img src="img/twit.png" alt="https://twitter.com/myao_s_moking" class="icon-img"></a>
+<a href="https://github.com/myaosato"><img src="img/github.png" alt="https://twitter.com/myaosato" class="icon-img"></a>
+</div>
+<div id="copyright">&copy; 2010 Satoaki Miyao</div>
+</footer>
+</body>
+</html>

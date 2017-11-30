@@ -87,8 +87,8 @@ a:hover{/*a要素の設定マウスオーバー時*/
 }
 code{/*code要素の設定*/
     width: 90%;
-    background-color: #000000;/*nyuhakushyoku*/
-    color:#ffffff;
+    background-color: #BBDDDD;
+    color:#000000;
     margin-top: 5px;
     margin-bottom: 5px;
     margin-left: 5%;

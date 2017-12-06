@@ -17,7 +17,7 @@
 <h2 id="title">あたりまえだのcdrcar</h2>
 </header>
 <div id="article-main">
-<p><a href="https://adventar.org/calendars/2490">関西Lispユーザ会アドベントカレンダー</a>7日目です。 </p><p>Lispな人も、そうでない人もこんばんは。早速ですが、Lispな人には馴染み深い話ですが、Lispにはcar, cdrという関数が有ります。Lispの基本的なデータ構造としてconsセルというものがあり、これは2つの要素からなります。この内、先の要素を取得するのがcar、後の要素を取得するのがcdrです。 </p><pre><code>(let ((cell (cons 1 2)))  
+<p><a href="https://adventar.org/calendars/2490">関西Lispユーザ会アドベントカレンダー</a>7日目です。昨日は、fu7mu4さんの<a href="http://d.hatena.ne.jp/fu7mu4/20171206/1512399065">謎の関西Lispユーザー会の紹介</a>でした。 </p><p>Lispな人も、そうでない人もこんばんは。早速ですが、Lispな人には馴染み深い話ですが、Lispにはcar, cdrという関数が有ります。Lispの基本的なデータ構造としてconsセルというものがあり、これは2つの要素からなります。この内、先の要素を取得するのがcar、後の要素を取得するのがcdrです。 </p><pre><code>(let ((cell (cons 1 2)))  
   (print cell)  
   ;&gt;&gt; (1. 2)  
   (print (car cell))  

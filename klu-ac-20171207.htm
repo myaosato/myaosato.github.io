@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width = device-width, initial-scale = 1, user-scalable = yes">
+<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="alternate" type="application/atom+xml" title="Atom 1.0" href="feed.xml">
+<title>MYAO's WEBSITE - あたりまえだのcdrcar</title>
+</head>
+<body>
+<header id="main-header">
+<h1><a href="index.htm">MYAO's WEBSITE</a></h1>
+</header>
+<main>
+<header id="article-header">
+<div id="date">2017-12-06</div>
+<h2 id="title">あたりまえだのcdrcar</h2>
+</header>
+<div id="article-main">
+<p><a href="https://adventar.org/calendars/2490">関西Lispユーザ会アドベントカレンダー</a>7日目です。 </p><p>Lispな人も、そうでない人もこんばんは。早速ですが、Lispな人には馴染み深い話ですが、Lispにはcar, cdrという関数が有ります。Lispの基本的なデータ構造としてconsセルというものがあり、これは2つの要素からなります。この内、先の要素を取得するのがcar、後の要素を取得するのがcdrです。 </p><pre><code>(let ((cell (cons 1 2)))  
+  (print cell)  
+  ;&gt;&gt; (1. 2)  
+  (print (car cell))  
+  ;&gt;&gt; 1  
+  (print (cdr cell))  
+  ;&gt;&gt; 2  
+  ) </code></pre><p>こんな感じ。cons関数で、car部cdr部がそれぞれ第一引数台に引数となるconsセルを作り、その内容をcar関数、cdr関数で取得して、print関数で表示させています。ここで、;&gt;&gt; は標準出力の表示を表すことにしておきます。断りなく書きましたが、コードは手元のCommon Lisp(処理系は、SBCL)のコードで、話を進めています。 </p><p>さて、(0 1 2)という数字が並んだリストがあるとします。これは、list関数を使って </p><pre><code>(list 0 1 2)  
+;=&gt; (0 1 2) </code></pre><p>のように作ることが出来ます。ここで、<a href="https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop">REPL</a>平たく言えば、対話環境で作業しているとし、その時表示されるものを ;=&gt; を使って表すことにします。(REPLでの結果は、重要なもの以外は省略します。） </p><p>実は、これは次のようにconsを使って書くことの出来る、consセルの連なりです。 </p><pre><code>(cons 0 (cons 1 (cons 2 nil)))  
+;=&gt; (0 1 2) </code></pre><p>そのため部分リストやリストの要素、リストの要素の要素といったものに、car関数,cdr関数を使ってアクセスすることが出来ます。 </p><pre><code>(car (cdr (list 0 1 2)))  
+;=&gt; 1 </code></pre><p>これは、基本的な例の一つですが、リストの二番目の要素にアクセスするsecond関数と同じ働きをします。ただし、このようにcar,cdrと何回も書くのは大変なので、次のような関数が定義されています。 </p><pre><code>(cadr (list 0 1 2))  
+;=&gt; 1 </code></pre><p><a href="http://clhs.lisp.se/Body/f_car_c.htm">Common Lisp HyperSpec</a>(CLHS)というCommon Lispのドキュメントによると、このタイプの関数はcxxxxrという形になるcar関数cdr関数が4つ繋がったものまで定義されています。 </p><pre><code>(cadddr (list 0 1 2 3 4))  
+;=&gt; 3  
+(cdddr (list 0 1 2 3 4))  
+;=&gt; (3 4) </code></pre><p>のような感じです。話は、それますが、cadrやcaddrなどで2番めや3番目の要素にアクセスできることが分かっていると、この関数の感じがつかめてくると思います。 </p><p>閑話休題、今日は、これらの関数をcx-xrタイプの関数とよび、このcx-xrタイプの関数を作ってみることにしましょう。4つまでのものはすでに定義されていることが分かっています。5つ以上のものを定義したいですが、 </p><pre><code>(defun cdddddr (lst)  
+   (cdr (cdr (cdr (cdr (cdr lst)))))) </code></pre><p>なんて、一つずつ定義していたら、日が暮れてしまいます。(defunは、Common Lispで関数を定義する関数だと思っていてください。なんとなく、分かってもらえると思います。) </p><p>そこで、Common Lisp自身にこれらの関数を定義させる。つまり、これらの関数を定義するようなプログラムを書こうと思います。再帰を使ったり、もっと良いものがある等Lisperの方々は色々突っ込んでくださればいいと思いますが、ここでは、愚直に書いていきたいと思います。 </p><p>まず、AとDを並べなければならないので、リストのリストを引数に取って、要素である各リストの頭に文字AとDを付け加える関数を書きます。 </p><pre><code>(defun addad (&amp;optional (lst (list nil)))  
+  (append (mapcar (lambda (elt) (cons #\A elt)) lst)  
+          (mapcar (lambda (elt) (cons #\D elt)) lst))) </code></pre><p>こんな感じです。&amp;optionalはオプショナル引数を定義し、変数名とデフォルト値のリストを書いていきます。ここでは、lstという変数がオプショナル引数でそのデフォルト値はnilつまりリストの終端を表すシンボルからのみなるリストです。 </p><p>例えば、 </p><pre><code>(addad)  
+;=&gt; ((#\A) (#\D))  
+(addad (addad))  
+;=&gt; ((#\A #\A) (#\A #\D) (#\D #\A) (#\D #\D)) </code></pre><p>こんな感じ。ですので、これを繰り返す関数を書きます。 </p><pre><code>(defun addad-n (n)  
+  (do ((lst (addad) (addad lst))  
+       (cnt 1 (1+ cnt)))  
+      ((= cnt n) lst))) </code></pre><p>Lispといえば、再帰のようなイメージをお持ちの方もいらっしゃるかもしれませんが、Common Lispにはdoという汎用的なループが用意されています。また、より人が理解しやすいような形式としてloopというものも用意されています。doよりはloop好きな人が多い印象ですが、ここではdoで書きました。ここでは詳しくは解説はしませんが、これを使うと。 </p><pre><code>(addad-n 5)  
+;=&gt; ((#\A #\A #\A #\A #\A) (#\A #\A #\A #\A #\D) (#\A #\A #\A #\D #\A)  
+     (#\A #\A #\A #\D #\D) (#\A #\A #\D #\A #\A) (#\A #\A #\D #\A #\D)  
+     (#\A #\A #\D #\D #\A) (#\A #\A #\D #\D #\D) (#\A #\D #\A #\A #\A)  
+     (#\A #\D #\A #\A #\D) (#\A #\D #\A #\D #\A) (#\A #\D #\A #\D #\D)  
+     (#\A #\D #\D #\A #\A) (#\A #\D #\D #\A #\D) (#\A #\D #\D #\D #\A)  
+     (#\A #\D #\D #\D #\D) (#\D #\A #\A #\A #\A) (#\D #\A #\A #\A #\D)  
+     (#\D #\A #\A #\D #\A) (#\D #\A #\A #\D #\D) (#\D #\A #\D #\A #\A)  
+     (#\D #\A #\D #\A #\D) (#\D #\A #\D #\D #\A) (#\D #\A #\D #\D #\D)  
+     (#\D #\D #\A #\A #\A) (#\D #\D #\A #\A #\D) (#\D #\D #\A #\D #\A)  
+     (#\D #\D #\A #\D #\D) (#\D #\D #\D #\A #\A) (#\D #\D #\D #\A #\D)  
+     (#\D #\D #\D #\D #\A) (#\D #\D #\D #\D #\D)) </code></pre><p>こんなふうに文字AとDが並ぶリストのリストが出来ます。この要素を引数に取る関数を２つ定義します。１つめはシンボルcar,cdrを組み合わせたリストを生成します。 </p><pre><code>(defun make-cx-xr (chars)  
+  (let ((lst 'lst))  
+    (dolist (ad (reverse chars) lst)  
+      (cond ((equal ad #\A) (setf lst (list 'car lst)))  
+            ((equal ad #\D) (setf lst (list 'cdr lst)))  
+             (t nil)))))  
+;=&gt; MAKE-CXR  
+ 
+(make-cx-xr (cadr (addad-n 5)))  
+;=&gt; (CAR (CAR (CAR (CAR (CDR LST))))) </code></pre><p>こんな感じ、あまりこういうことはやらないのですが、最後のシンボル LSTは後で使います。また、Common Lispはコードを読み取り、基本的には大文字に変換してから処理をします。今まで、AとDを大文字にしていたのはこのためです。またもうお気づきでしょうけれど、#\Aや#\Dは文字を表します。 </p><p>もう一つの関数は、シンボルを作るものです。シンボルと、これまで言ってきましたが、すごく平たく言いますと、Common Lispにはシンボルというデータが有り、それはCommon Lispのコードの中で例えば変数や関数名を指定する時に私達が文字列として書いているものだと思ってください。この言いまわしは、分かりにくいかもしれませんが、例えばCARやCDR,DEFUNなんかがシンボルです。関数の定義や変数の定義はシンボルと関数や値を結びつける操作となります。まあ、この言い方も正確ではない気がしますので、もっと詳しく知りたい方は、お近くのLisperまでお問い合わせください。 </p><p>閑話休題、定義するのは以下の関数です。 </p><pre><code>(defun chars-to-symbol (chars)  
+  (intern (concatenate 'string '(#\C) chars '(#\R))))  
+;=&gt; CHARS-TO-SYMBOL  
+ 
+(chars-to-symbol (cadr (addad-n 5)))  
+;=&gt; CAAAADR  
+    NIL </code></pre><p>実行例では、多値を返しています。が、ここでは深く立ち入らないことにしましょう。目標通りCAAAADRというシンボルが返って来ています。 </p><p>さて、これで道具が揃ってきましたので、Common Lispのコードを吐かせる方向に向かって行きましょう。 </p><pre><code>(defun cx-xr-lst (n)  
+  (let ((lst (addad-n n)))  
+    (mapcar (lambda (chars)  
+              `(defun ,(chars-to-symbol chars) (lst) ,(make-cx-xr chars)))  
+            lst))) </code></pre><p>まずは、この関数を使って、関数定義のdefun関数の呼び出しコードのリストを作ります。 </p><pre><code>(cx-xr-lst 5)  
+;=&gt; ((DEFUN CAAAAAR (LST) (CAR (CAR (CAR (CAR (CAR LST))))))  
+     (DEFUN CAAAADR (LST) (CAR (CAR (CAR (CAR (CDR LST))))))  
+     (DEFUN CAAADAR (LST) (CAR (CAR (CAR (CDR (CAR LST))))))  
+     (DEFUN CAAADDR (LST) (CAR (CAR (CAR (CDR (CDR LST))))))  
+     ...  
+     (DEFUN CDDDAAR (LST) (CDR (CDR (CDR (CAR (CAR LST))))))  
+     (DEFUN CDDDADR (LST) (CDR (CDR (CDR (CAR (CDR LST))))))  
+     (DEFUN CDDDDAR (LST) (CDR (CDR (CDR (CDR (CAR LST))))))  
+     (DEFUN CDDDDDR (LST) (CDR (CDR (CDR (CDR (CDR LST))))))) </code></pre><p>長いので、途中省略しました。まあ、上記の通りです。最初に、私が書いたものと同じですね。（大文字小文字の差が有りますが、私が先に書いたものは、Common Lispに読み取られ大文字に読みかえられるので一緒だと思ってください。） </p><pre><code>(defun cdddddr (lst)  
+   (cdr (cdr (cdr (cdr (cdr lst)))))) </code></pre><p>さて、Common Lispのコードを吐き出させます。まずリストの要素の残りを逐次実行していくPROGNというものを使います。例としては、こんな感じ。 </p><pre><code>(PROGN  
+  (print 1)  
+  (print 2))  
+;&gt;&gt; 1  
+;&gt;&gt; 2 </code></pre><p>これを使うために、上で作ったリストの先頭にシンボルPROGNを付け加えたいですね。また、5つのグループのみでは物足りないです。5以上の数を引数に取りいっぺんに処理がしたいので、まずは5から引数の数までに、cx-lstを適用していき、返り値のリストを結合させます。これには先程ちらりと登場したloopを使います。こうやって出来た大きなリストの先頭にPROGNを付け加えることにします。以下のようになります。 </p><pre><code>(defun s-exp-def-cx-xr (n)  
+  (if (&gt;= n 5)  
+      (cons 'progn (loop for i from 5 to n  
+                      append (cxr-lst i)))))  
+ 
+(s-exp-def-cx-xr 6)  
+;=&gt; (PROGN  
+      (DEFUN CAAAAAR (LST) (CAR (CAR (CAR (CAR (CAR LST))))))  
+      ......  
+      (DEFUN CDDDDDAR (LST) (CDR (CDR (CDR (CDR (CDR (CAR LST)))))))  
+      (DEFUN CDDDDDDR (LST) (CDR (CDR (CDR (CDR (CDR (CDR LST)))))))) </code></pre><p>こちらも長いので間は省略しました。これで、Common Lispのコードを返す関数が出来上がりです。最後はEVALを使ってこれを評価してやればお望みの関数が定義されます。 </p><pre><code>(defun def-cx-xr (n)  
+  (if (eval (s-exp-def-cx-xr n))  
+      t  
+      nil)) </code></pre><p>5未満の数を与えた場合s-exp-def-cx-xrがnilを返すので、ifを使ってその場合にはnilを、それ以外の場合にはtを返すようにしました。REPLに最後のDEFUNの返り値だけが評価されるのが、嫌だったのでくらいの理由です。Common Lispではnilは偽、nil以外は真を表します。これを実行すると以下のようになります。 </p><pre><code>(def-cx-xr 4)  
+;=&gt; nil  
+(def-cx-xr 10)  
+;=&gt; t  
+(cadddddddddr (list 0 1 2 3 4 5 6 7 8 9))  
+;=&gt; 9 </code></pre><p>さて、長くなってしましまして、途中読者を置いてきぼりにしてしまった気がしますが、これで目標が達成できました。 </p><p>今回のコードは<a href="https://github.com/myaosato/cx-xr">GitHub上のリポジトリ</a>に安置しておきました。 </p><p>最後に、あたりまえだのcdrcarというのは、前田製菓のクラッカーのCM、「あたり前田のクラッカー」というキャッチフレーズにかけています。このキャッチフレーズのように音の似たものを使った遊びギャグのことを地口というのですが、あたりまえだのcdrcarはいうなれば、さらに音の似たのをつかって遊んでいるメタ地口のようなもので(ほんまか？) 、本日のLispによるメタプログラミングともピッタリのタイトルだと言えるでしょう。（うそつけ） </p><p>それはそうとして、やはりS式というものは楽しいなと言うことを改めて感じました。この簡潔な構文と、プリプロセッサのおかげで、よく言われるマクロが云々ということですが、それはまた別の場所に譲ります。 </p><p>また、Lispに触れたことのない方には、コード自体の部分に置いては何がなんやらという感じに思われた方もいるかもしれませんが、この記事でLispってそんなことも出来るのかと興味を持って頂けたら幸いです。もし、さらに深く知りたいという方はお近くのLisperもしくは、<a href="https://kansai-lisp-users.github.io/">関西Lispユーザ会</a>などのユーザ会に話しかけてみてはいかがでしょうか。 </p><p>ちなみに、前田製菓は、関西（大阪）の会社です。 </p><p>関西Lispユーザ会アドベントカレンダー、明日は未定です。 </p>
+</div>
+<footer id="article-footer">
+UP: <a href=".htm"><tri:page prop="title" name=""></a>
+PREV: <a href=".htm"><tri:page prop="title" name=""></a>
+NEXT: <a href=".htm"><tri:page prop="title" name=""></a>
+</footer>
+</main>
+<footer id="main-footer">
+<div id="icons"><a href="feed.xml"><img src="img/feed.png" alt="feed.xml" class="icon-img"></a>
+<a href="https://twitter.com/myao_s_moking"><img src="img/twit.png" alt="https://twitter.com/myao_s_moking" class="icon-img"></a>
+<a href="https://github.com/myaosato"><img src="img/github.png" alt="https://twitter.com/myaosato" class="icon-img"></a>
+</div>
+<div id="copyright">&copy; 2010 Satoaki Miyao</div>
+</footer>
+</body>
+</html>

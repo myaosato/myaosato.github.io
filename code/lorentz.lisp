@@ -13,19 +13,17 @@
 (setf (aref y 1) 1.0d0)
 (setf (aref z 1) 1.05d0)
 
-(defvar start (get-universal-time))
+(time
+ (loop for i from 1 to (1- n)
+    do 
+      (setf (aref x (1+ i))
+            (+ (aref x i)
+               (* dt (+ (- (* a (aref x i))) (* a (aref y i))))))
+      (setf (aref y (1+ i))
+            (+ (aref y i)
+               (* dt (+ (- (* (aref x i) (aref z i))) (* b (aref x i))  (- (aref y i))))))
+      (setf (aref z (1+ i))
+            (+ (aref z i)
+               (* dt (- (* (aref x i) (aref y i)) (* c (aref z i))))))))
 
-(loop for i from 1 to (1- n)
-   do 
-     (setf (aref x (1+ i))
-           (+ (aref x i)
-              (* dt (+ (- (* a (aref x i))) (* a (aref y i))))))
-     (setf (aref y (1+ i))
-           (+ (aref y i)
-              (* dt (+ (- (* (aref x i) (aref z i))) (* b (aref x i))  (- (aref y i))))))
-     (setf (aref z (1+ i))
-           (+ (aref z i)
-              (* dt (- (* (aref x i) (aref y i)) (* c (aref z i)))))))
 
-(defvar elaspsed-time (- (get-universal-time) start))
-(format t "Common Lisp: ~,2f[s]: ~A~%" elaspsed-time (aref x n))

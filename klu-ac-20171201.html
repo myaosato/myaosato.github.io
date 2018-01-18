@@ -1,0 +1,17 @@
+<!doctype html><html lang="ja"><head><meta charset="UTF-8" /><meta name="viewport" content="width = device-width, initial-scale = 1, user-scalable = yes" /><link rel="stylesheet" type="text/css" href="css/style.css" /><title>MYAO's WEBSITE関西Lispユーザ会のことと、writeについて</title></head><body><header id="main-header"><h1><a href="./index.html">MYAO's WEBSITE</a></h1></header><main><header id="article-header"><div id="date">2017-12-01</div><h2 id="title">関西Lispユーザ会のことと、writeについて</h2></header><div id="article-main"><p>この記事は<a href="https://adventar.org/calendars/2490">関西Lispユーザ会アドベントカレンダー</a>1日目です。 </p><p>えー、皆様、コンバンハ。実は、この記事は前の日曜日に用意されたものです。僕の目線で言えば、現在進行形で用意されています。次の会まで間が開くので、関西Lispユーザ会アドベントカレンダーやろうかとなりましたが、さて何を書きましょうかねというところです。 </p><p>関西Lispユーザ会は、今年春に第一回を開催したわけですが、年内に3回目まで開催という状況で、今後に期待というところです。来年の予定としては、1月には<a href="https://www.ospn.jp/osc2018-osaka/">オープンソースカンファレンス</a>に出展しまして、その翌週2月3日は、第四回関西Lispユーザ会を開催するということが決まっています。来年はもう少し開催回数を増やすことが出来たら良いなと（多分他の運営も）思っていますので、皆様よろしくお願いしますという気持ちです。 </p><p>さて関西Lispユーザ会に関しての振り返り等については、他の方と他の機会に譲りまして、lispの話でもしようかと思います。 </p><p>先日、<a href="http://postd.cc/a-little-story-about-the-yes-unix-command/">Unixコマンド”yes”についてのちょっとした話</a>という記事が上がってきました。Common Lispでは<a href="http://octahedron.hatenablog.jp/entry/2017/11/27/104420">t-sinさんがやってました</a>。 </p><p>さて、まあ、自分もやってみようかなと思っていたのですが、では、どうやってやるのと考えた時に、バッファを使って云々と言う前に、そもそも、そういえばCommon Lispの出力関数って何があるだろうということを知らないなと気付きました。普段は、ほぼformatのみ使っています。(どうでも良いですが、僕はformatとdoが楽しいなと感じたことがCommon Lispに惹かれた一つに理由です。) さて、format意外にも、print princなどは一応は知っていたのですが、調べてみるると、writeという関数があることを知りました。 </p><p><a href="http://clhs.lisp.se/Body/f_wr_pr.htm">write</a>は、基本となるCommon Lispの出力関数のようで、printやprincもどうやらwriteを使って書けるようです。 </p><ul><li>array</li><li>base</li><li>case</li><li>circle</li><li>escape</li><li>gensym</li><li>length</li><li>level</li><li>lines</li><li>miser-width</li><li>pprint-dispatch</li><li>pretty</li><li>radix</li><li>readably</li><li>right-margin</li></ul><p>といったオプションがあり、デフォルトではスペシャル変数を見に行きます。以下、スペシャル変数は全てデフォルトの状態として、標準出力に出力されるものを&gt;&gt;の後に書きます。 </p><p>馴染み深そうなのは、escapeとreadablyですね。 </p><pre><code>(write "y" :escape nil :readably nil)  
+&gt;&gt; y  
+(write #\a :escape nil :readably nil)  
+&gt;&gt; a </code></pre><p>が </p><pre><code>(princ "y")  
+&gt;&gt; y  
+(princ #\a)  
+&gt;&gt; y  
+</code></pre><p>と同じです。細かい挙動は、印字対象となるオブジェクトごとに決められているようですが、escapeがtであれば、stringの前後の""を表示します。readablyは平たく言えば、可能な限りそのままread出来る形で印字すると行ったところでしょうか。 </p><p>radixとbaseも楽しいです。 </p><pre><code>(write 4 :base 2 :radix nil)  
+&gt;&gt; 100  
+(write 4 :base 2 :radix t)  
+&gt;&gt; #b100  
+(write 14 :base 8 :radix nil)  
+&gt;&gt; #16  
+(write 14 :base 8 :radix t)  
+&gt;&gt; #o16  
+(write 7 :base 3 :radix t)  
+&gt;&gt; #3r21 </code></pre><p>基数の指定とその表示の制御ですね。 </p><p>と、まあ、こんな具合に、表示ってこと一つとっても、まだまだ知らないことがあるなぁと、改めて思い知ったのでした。 </p><p>他のオプションは、また機会があれば、記事にします。 </p><p>明日の関西Lispユーザ会アドベントカレンダーは、たけおかさんの<a href="https://ameblo.jp/takeoka/entry-12328158757.html">Lisp 古典ギャグ</a>です。 </p></div><footer id="article-header">UP: <a href=".html"></a> PREV: <a href=".html"></a> NEXT: <a href=".html"></a></footer></main><footer id="main-footer"><div id="icnos"><a href="https://twitter.com/myao_s_moking"><img src="img/twit.png" class="icon-img" /></a><a href="https://github.com/myaosato"><img src="img/github.png" class="icon-img" /></a></div><div id="copyright">&copy;2010 Satoaki Miyao</div></footer></body></html>

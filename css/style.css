@@ -32,13 +32,11 @@ dd{
 }
 h1{ /*サイトタイトル専用（MYAO's website） */
     padding:0px;
-    margin:0px;
-    margin-left:10px;
+    margin: auto;
     text-align:center;
     font-size: 20px;
     line-height: 20px;
     font-weight:bold;
-    float:left;
 }
 h2{/*記事の見出し用*/
     width: 100%;
@@ -206,5 +204,4 @@ margin-right:10px;
 div#icons a, div#icons a:hover, div#icons a:visited{
     color:white;
     background-color:transparent;
-}    
-
+}

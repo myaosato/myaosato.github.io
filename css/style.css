@@ -112,6 +112,7 @@ header#main-header{ /*基本の設定 ページ全体のヘッダー用*/
     padding: 5px 0px;
     opacity: 0.9;
 }
+
 footer#main-footer{ /*基本の設定 ページ全体のフッター用*/
     background-color:#f7fcfe;
     color:#000000;

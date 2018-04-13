@@ -49,7 +49,14 @@ $ cat texts/project
 :PARENT  
 :PREV  
 :NEXT  
-:TEXT </code></pre><p>ここでは、:CHLIDラベルが複数あります。このように複数同じラベルのものがあるときには、これを配列やリストとして取り扱うことが出来ます。 (1つであっても要素一つのリストとして扱うことが出来ます。そのままでは、あまり意味はないでしょうけれども。) </p><h4>特別なラベル</h4><p>atsuageは、:PARENT :CHILD :NEXT :PREVという記事同士の関係を扱うラベルを特別なラベルとして扱います。pageコマンドやupdateコマンド、refreshコマンドでHTMLが生成される際には、:PARENT :PREVの内容が指定するファイルに、:CHILD :NEXTのラベルの内容を追加しに行きます。これによって、ある程度では在りますが、例えば日記などの記事の関係を自動的に更新することが出来ます。 </p><h3>HTMLファイルの作成</h3><h3>templateファイル</h3><h3>コマンド一覧</h3><p>コマンドごとの解説です。 </p><h4>help コマンド</h4><p>helpコマンドでは、コマンドの一覧と簡単な説明を表示します。 </p><pre><code>$ atsuage help  
+:TEXT </code></pre><p>ここでは、:CHLIDラベルが複数あります。このように複数同じラベルのものがあるときには、これを配列やリストとして取り扱うことが出来ます。 (1つであっても要素一つのリストとして扱うことが出来ます。そのままでは、あまり意味はないでしょうけれども。) </p><h4>特別なラベル</h4><p>atsuageは、:PARENT :CHILD :NEXT :PREVという記事同士の関係を扱うラベルを特別なラベルとして扱います。pageコマンドやupdateコマンド、refreshコマンドでHTMLが生成される際には、:PARENT :PREVの内容が指定するファイルに、:CHILD :NEXTのラベルの内容を追加しに行きます。これによって、ある程度では在りますが、例えば日記などの記事の関係を自動的に更新することが出来ます。 </p><h4>.atsuageファイルの:TEXT-FORMATプロパティ</h4><pre><code>$ cat .atsuage  
+(:IGNORE ("project") :TEXT-FORMAT  
+ (:DEFAULT  
+  (:TITLE "title" :DATE "" :PARENT "" :PREV "" :NEXT "" :TEXT "please write  
+...  
+...  
+"))  
+ :DEFAULT-TEMPLATES NIL) </code></pre><p>.atsuageファイルの:TEXT-FORMATプロパティでは、先にも述べたように、デフォルトで使用される。あるいはnewもしくはinewコマンドで、指定するテキストファイルの雛形を設定することが出来ます。 :TEXT-FORMATの </p><h3>HTMLファイルの作成</h3><h3>templateファイル</h3><h3>コマンド一覧</h3><p>コマンドごとの解説です。 </p><h4>help コマンド</h4><p>helpコマンドでは、コマンドの一覧と簡単な説明を表示します。 </p><pre><code>$ atsuage help  
  
 atsuage  
  
@@ -78,5 +85,5 @@ TITLE: (default: title) hoge
 DATE: (default: ) 2018-04-14  
 PARENT: (default: )  
 PREV: (default: )  
-NEXT: (default: ) </code></pre><p>このように、各ラベルの内容を対話的に指定できます。ただし、ここで指定できる内容は単一行の物に限られます。空文字が入力された場合には、default: として表示されている値を用います。 </p><h4>page コマンド</h4><p>pageコマンドは、 </p><h4>update コマンド #### page-all コマンド #### refresh コマンド </h4><h4>dir コマンド</h4><p>dirコマンドは、カレントディレクトリでatsuageのコマンドを用いた場合には、どのプロジェクトを操作するかを表示します。 内部の処理では、.atsuageファイルの存在するディレクトリをカレントディレクトリから親ディレクトリに上がっていきながら探します。 </p><p>/home/mypages/ディレクトリがプロジェクトのディレクトリである時に、/home/mypages/texts/ディレクトリ内でコマンドを実行したとすると以下のようになります。 </p><pre><code>$ atsuage dir  
+NEXT: (default: ) </code></pre><p>このように、各ラベルの内容を対話的に指定できます。ただし、ここで指定できる内容は単一行の物に限られます。空文字が入力された場合には、default: として表示されている値を用います。 </p><h4>page コマンド</h4><p>pageコマンドは、 </p><h4>update コマンド</h4><h4>page-all コマンド</h4><h4>refresh コマンド</h4><h4>dir コマンド</h4><p>dirコマンドは、カレントディレクトリでatsuageのコマンドを用いた場合には、どのプロジェクトを操作するかを表示します。 内部の処理では、.atsuageファイルの存在するディレクトリをカレントディレクトリから親ディレクトリに上がっていきながら探します。 </p><p>/home/mypages/ディレクトリがプロジェクトのディレクトリである時に、/home/mypages/texts/ディレクトリ内でコマンドを実行したとすると以下のようになります。 </p><pre><code>$ atsuage dir  
 /home/mypages/ </code></pre><h4>texts コマンド</h4><p>textsディレクトリ以下のファイル名一覧を表示します。 </p><h4>conf コマンド</h4><p>.atsuageファイルの中身を表示します。 </p><h4>updated コマンド</h4><p>.update-timeファイルとテキストファイルの更新時間を比較して、テキストファイル更新後にHTMLファイルに変換されていないファイルの一覧を表示します。 簡単に言うと、これらのファイルがupdateコマンドで更新される対象となります。 </p></div><footer id="article-footer">UP: <a href="atsuage.html">atsuage</a> PREV: <a href=".html"></a> NEXT: <a href=".html"></a></footer></main><footer id="main-footer"><div id="icnos"><a href="https://twitter.com/myao_s_moking"><img src="img/twit.png" class="icon-img" /></a><a href="https://github.com/myaosato"><img src="img/github.png" class="icon-img" /></a></div><div id="copyright">&copy;2010 Satoaki Miyao</div></footer></body></html>

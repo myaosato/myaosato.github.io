@@ -56,41 +56,4 @@ $ cat texts/project
 ...  
 ...  
 "))  
- :DEFAULT-TEMPLATES NIL) </code></pre><p>.atsuageファイルの:TEXT-FORMATプロパティでは、先にも述べたように、デフォルトで使用される。あるいはnewもしくはinewコマンドで、指定するテキストファイルの雛形を設定することが出来ます。 :TEXT-FORMATの値となるplistの各プロパティの値が、テキストファイルの雛形となるplistです。雛形が指定されないときは、:DEFAULTプロパティの値が使用されます。 もし、.atsuageファイルの:TEXT-FORMATプロパティが無いや、:TEXT-FORMATプロパティの:DEFAULTプロパティが無い場合には、new-projectコマンドで生成される.atsuageファイルの:TEXT-FORMATプロパティの:DEFAULTプロパティと同じものを雛形として使用します。 </p><h3>HTMLファイルの作成</h3><p>HTMLファイルを作成する方法として、まず単一のテキストファイルを処理したいのか、プロジェクト全体のテキストファイルを処理したいのかによって二通りに分かれます。 </p><h4>単一のテキストファイルを処理する場合</h4><p>単一のテキストファイルのみを処理する場合には、pageコマンドを用います。 hogeという名前のテキストファイルを処理する場合には、 </p><pre><code>$ atsuage page hoge </code></pre><p>とします。 これで、.atsuageに特に指定がされていない場合には(指定の仕方ついては後述)、templateという名前のテンプレートファイル（templates/template）と、texts/hogeを用いて、HTMLファイルを作成します。 </p><p>templates/以下に、別のテンプレートファイル、例えばpiyoという名前のものを用意していた時に、これを用いたい場合には、 </p><pre><code>$ atsuage page hoge piyo </code></pre><p>とします。これで、明示的に texts/hogeとtemplate/piyoを用いてHTMLファイルを作成することが出来ます。 </p><p>しかし、ある特別なファイル、例えば日記について各記事のページ用のものをデフォルトの雛形として、一覧のページは別の雛形を使いたい場合に、一覧のページを処理するときのみデフォルトの雛形を変更したいという場合があると思います。 このような場合に、例えば、hogeというテキストファイルはデフォルトでpiyoというテンプレートファイルを用いて、HTMLファイルの作成を行いたい場合には、 </p><pre><code>$ cat .atsuage  
-(:IGNORE ("project") :TEXT-FORMAT  
- (:DEFAULT  
-  (:TITLE "title" :DATE "" :PARENT "" :PREV "" :NEXT "" :TEXT "please write  
-...  
-...  
-"))  
- :DEFAULT-TEMPLATES （("hoge" . "piyo")）) </code></pre><p>のように、.atsuageファイルの:DEFAULT-TEMPLATESに上記のように、テキストファイル名（car部）とテンプレートファイル名(cdr部)のコンスセルで表します。この設定があると、 </p><pre><code>$ atsuage page hoge </code></pre><p>とした時に、テンプレートとして、templates/piyoが用いられます。 </p><p>注意事項として、pageコマンドでは、:PREV :PARENTプロパティに関する解決を行います。 </p><h4>プロジェクト全体のテキストファイルを処理する場合</h4><p>以下の３つのコマンドがある。 どれも、プロジェクト全体として、テキストファイルからHTMLファイルを生成しようとするコマンドである。 </p><ul><li>updateでは、最終更新日を確認することにより、更新されたテキストファイルのみ処理を行います。(:PREV :PARENTプロパティに関する解決を行います。)</li><li>make-allでは、すべてのテキストファイルの処理を行いますが、:PREV :PARENTプロパティに関する解決を行いません。</li><li>reflechでは、すべてのテキストファイルの処理を行い、:PREV :PARENTプロパティに関する解決も行います。</li></ul><h3>templateファイル</h3><h3>コマンド一覧</h3><p>コマンドごとの解説です。 </p><h4>help コマンド</h4><p>helpコマンドでは、コマンドの一覧と簡単な説明を表示します。 </p><pre><code>$ atsuage help  
- 
-atsuage  
- 
-  version 0.1.1  
- 
-  simple static site generator  
- 
-  commands  
- 
-    new-project [name] : make new project  
-    new [name] : make new text  
-    new [name] [format] : make new text using specified format  
-    inew [name] : make new text (interactive)  
-    inew [name] [format] : make new text using specified format (interactive)  
-    page [name] : make page and resolve relation  
-    page [name] [template] : make page using specified template and resolve relation  
-    update : make pages and resolve relation (updated texts only)  
-    page-all : make pages (all texts) this dosen't resolve relation  
-    refresh : make pages (all texts) this resolve relation  
-    dir : show current project directry  
-    texts : show text list  
-    conf : show config  
-    updated : show updated text files  
-    help : show help message </code></pre><h4>new-project コマンド</h4><p>new-projectコマンドは、新たにプロジェクトを作成します。 </p><h4>new コマンド</h4><p>newコマンドは、texts以下にテキストファイルを作成します。引数は1つ、もしくは2つです。 </p><pre><code>$ atsuage new hoge </code></pre><p>のように1つであれば、.atsuageで指定した:DEFAULTの雛形でテキストファイルを作成します。 もし、:TEXT-FORMATプロパティの:DEFAULTプロパティが指定されていなければ、new-projectした際にできる:TEXT-FORMATプロパティの:DEFAULTプロパティと同じ雛形で、テキストファイル(texts/hoge)が作成されます。 </p><pre><code>$ atsuage new hoge piyo </code></pre><p>のように2つの引数である場合、2つめの引数(上の例ではpiyo)で雛形を指定します。これは、.atsuageファイルの:TEXT-FORMATプロパティから雛形を探して、使用します。 この例では、:PIYOプロパティを用いてテキストファイル(texts/hoge)が作成されます。 </p><h4>inew コマンド</h4><p>inewコマンドは、newコマンドと同じように、テキストファイルを作成します。 ただし、inewコマンドの場合は、newコマンドと違ってテキストファイルに出力される各タグの内容を対話的に指定することが出来ます。 (inewのiはinteractiveのiです。) </p><pre><code>$ atsuage inew hoge  
-TITLE: (default: title) hoge  
-DATE: (default: ) 2018-04-14  
-PARENT: (default: )  
-PREV: (default: )  
-NEXT: (default: ) </code></pre><p>このように、各ラベルの内容を対話的に指定できます。ただし、ここで指定できる内容は単一行の物に限られます。空文字が入力された場合には、default: として表示されている値を用います。 </p><h4>page コマンド</h4><p>pageコマンドは、 </p><h4>update コマンド</h4><ul><li>最終更新日を確認することにより、更新されたテキストファイルのみ処理を行います。(:PREV :PARENTプロパティに関する解決を行います。)</li></ul><h4>page-all コマンド</h4><ul><li>すべてのテキストファイルの処理を行いますが、:PREV :PARENTプロパティに関する解決を行いません。</li></ul><h4>refresh コマンド</h4><ul><li>すべてのテキストファイルの処理を行い、:PREV :PARENTプロパティに関する解決も行います。</li></ul><h4>dir コマンド</h4><p>dirコマンドは、カレントディレクトリでatsuageのコマンドを用いた場合には、どのプロジェクトを操作するかを表示します。 内部の処理では、.atsuageファイルの存在するディレクトリをカレントディレクトリから親ディレクトリに上がっていきながら探します。 </p><p>/home/mypages/ディレクトリがプロジェクトのディレクトリである時に、/home/mypages/texts/ディレクトリ内でコマンドを実行したとすると以下のようになります。 </p><pre><code>$ atsuage dir  
-/home/mypages/ </code></pre><h4>texts コマンド</h4><p>textsディレクトリ以下のファイル名一覧を表示します。 </p><h4>conf コマンド</h4><p>.atsuageファイルの中身を表示します。 </p><h4>updated コマンド</h4><p>.update-timeファイルとテキストファイルの更新時間を比較して、テキストファイル更新後にHTMLファイルに変換されていないファイルの一覧を表示します。 簡単に言うと、これらのファイルがupdateコマンドで更新される対象となります。 </p></div><footer id="article-footer">UP: <a href="atsuage.html">atsuage</a> PREV: <a href=".html"></a> NEXT: <a href=".html"></a></footer></main><footer id="main-footer"><div id="icnos"><a href="https://twitter.com/myao_s_moking"><img src="img/twit.png" class="icon-img" /></a><a href="https://github.com/myaosato"><img src="img/github.png" class="icon-img" /></a></div><div id="copyright">&copy;2010 Satoaki Miyao</div></footer></body></html>
+ :DEFAULT-TEMPLATES NIL) </code></pre><p>.atsuageファイルの:TEXT-FORMATプロパティでは、先にも述べたように、デフォルトで使用される。あるいはnewもしくはinewコマンドで、指定するテキストファイルの雛形を設定することが出来ます。 :TEXT-FORMATの値となるplistの各プロパティの値が、テキストファイルの雛形となるplistです。雛形が指定されないときは、:DEFAULTプロパティの値が使用されます。 もし、.atsuageファイルの:TEXT-FORMATプロパティが無いや、:TEXT-FORMATプロパティの:DEFAULTプロパティが無い場合には、new-projectコマンドで生成される.atsuageファイルの:TEXT-FORMATプロパティの:DEFAULTプロパティと同じものを雛形として使用します。 </p><h5>雛形における特別な値</h5></div><footer id="article-footer">UP: <a href="atsuage.html">atsuage</a> PREV: <a href=".html"></a> NEXT: <a href=".html"></a></footer></main><footer id="main-footer"><div id="icnos"><a href="https://twitter.com/myao_s_moking"><img src="img/twit.png" class="icon-img" /></a><a href="https://github.com/myaosato"><img src="img/github.png" class="icon-img" /></a></div><div id="copyright">&copy;2010 Satoaki Miyao</div></footer></body></html>

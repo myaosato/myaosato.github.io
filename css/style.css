@@ -4,16 +4,18 @@ html {
 }
 body {
   -webkit-text-size-adjust: 100%;
-  font-size:100%;
-  line-height: 180%;
+  font-size: 18px;
+  line-height: 140%;
   padding:0px;
   margin:0px;
   height: 100%;
   background: #dfe0d8;
-  font-family:'ヒラギノ角ゴ Pro W3','Hiragino Kaku Gothic Pro','メイリオ',Meiryo,Arial,'Note Sans CJK JP','ＭＳ Ｐゴシック',sans-serif;
+  font-family:'ヒラギノ角ゴ Pro W3','Hiragino Kaku Gothic Pro','メイリオ',Meiryo,Arial,'Note Sans CJK JP',sans-serif;
 }
 p {
   text-indent: 1em;
+  margin-top: 40px;
+  margin-bottom: 40px;
 }
 li{
   margin-bottom: 0.2em;
@@ -38,8 +40,8 @@ h1{ /*サイトタイトル専用（MYAO's website） */
   padding:0px;
   margin: auto;
   text-align:center;
-  font-size: 20px;
-  line-height: 60px;
+  font-size: 30px;
+  line-height: 40px;
   font-weight:bold;
 }
 h2{/*記事の見出し用*/
@@ -103,7 +105,7 @@ code{/*code要素の設定*/
 }
 /*id*/
 header#main-header{ /*基本の設定 ページ全体のヘッダー用*/
-  height: 60px;
+  height: 40px;
   top:0px;
   left:0px;
   background-color: #1d695f;
@@ -171,7 +173,6 @@ header#article-header{
     margin: 0;
     text-align: left;
     font-size: 100%;
-    line-height: 180%;
 }
 footer#article-footer{
     width:96%;

@@ -168,8 +168,9 @@ header#article-header{
     line-height: 119%;
 }
 #article-main{
-    width: 96%;
-    padding:0% 2% 0%;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0 5%;
     margin: 0;
     text-align: left;
     font-size: 100%;

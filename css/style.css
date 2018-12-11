@@ -14,8 +14,8 @@ body {
 }
 p {
   text-indent: 1em;
-  margin-top: 40px;
-  margin-bottom: 40px;
+  margin-top: 1em;
+  margin-bottom: 1em;
 }
 li{
   margin-bottom: 0.2em;
@@ -90,16 +90,16 @@ a:hover{/*a要素の設定マウスオーバー時*/
   background:#eaf4fc;/*月白*/
 }
 code{/*code要素の設定*/
-  width: 90%;
+  width: 100%;
   background-color: #BBDDDD;
   color:#000000;
-  margin-left: 5%;
-  padding: 5px;
+  padding:0 1ex;
   line-height: 120%;
   font-size: 100%;
   font-family: monospace;
   display: block;
   white-space:pre-wrap;
+  box-sizing: border-box;
   word-break:break-all;
   word-wrap:break-word;
 }

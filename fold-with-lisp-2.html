@@ -10,7 +10,7 @@ CL-USER&gt; </code></pre><p>まず、上記の形の関数を実装すること�
 MY-REDUCE  
 CL-USER&gt; (my-reduce #'+ (list 1 2 3) 0)  
 6  
-CL-USER&gt; </code></pre><p>素直に書くと、こんな感じでしょう。この状態では、まだ重畳関数を一般化していく方向性がつかみにくいと思います。 重畳関数を一般化するには、違った書き方をするほうが分かりやすいのですが、ここでは、このreduceがリストの要素を総なめているということを確認しておきましょう。 </p><p>リストの要素を各一回処理するという考え方では、リストの先頭から進む上記の形が分かりやすいですが、重畳関数を一般化するというシリーズの目的のためにも次の形のreduceについて考えます。 </p><pre><code>CL-USER&gt; ;; (reduce func list :initial-value init :form-end t) 以下func list initを使って説明します。  
+CL-USER&gt; </code></pre><p>素直に書くと、こんな感じでしょう。この状態では、まだ重畳関数を一般化していく方向性がつかみにくいと思います。 重畳関数を一般化するには、違った書き方をするほうが分かりやすいのですが、ここでは、このreduceがリストの要素を総なめているということを確認しておきましょう。 </p><h3>foldr</h3><p>リストの要素を各一回処理するという考え方では、リストの先頭から進む上記の形が分かりやすいですが、重畳関数を一般化するというシリーズの目的のためにも次の形のreduceについて考えます。 </p><pre><code>CL-USER&gt; ;; (reduce func list :initial-value init :form-end t) 以下func list initを使って説明します。  
 CL-USER&gt; (reduce #'+ (list 1 2 3) :initial-value 0 :from-end t)  
 6  
 CL-USER&gt; (reduce #'- (list 1 2 3) :initial-value 0 :from-end t)  
@@ -27,7 +27,7 @@ CL-USER&gt; (my-foldr #'- (list 1 2 3) 0)
 2  
 CL-USER&gt; </code></pre><p>こちらの形のほうが、重畳関数の一般化を考えると分かりやすい形をしています。 </p><pre><code>(funcall func (car list) (my-foldr func (cdr list) init)) </code></pre><p>上の式に着目します。my-foldrが再帰になっているところを(cdr list)と書き換えます。 </p><pre><code>(funcall func (car list) (cdr list)) </code></pre><p>funcが#'consであれば、これはlistを返します。funcをcons、initをnilとして、my-foldrや:form-endがtのreduceを計算してみます。 </p><pre><code>CL-USER&gt; (my-foldr #'cons (list 1 2 3) nil)  
 (1 2 3)  
-CL-USER&gt; </code></pre><p>結果はlistと一致します。これはlistがどの様なものでも成り立ちます。あとで定義する一般化された重畳関数でもこれと同じ性質を持ちます。 </p><p>ここで、リストとは何かということを考えます。まずリストの先頭にある要素を付け足したものはリストです。つまり、次の式を考えます。 </p><pre><code>CL-USER&gt; (listp *list*)  
+CL-USER&gt; </code></pre><p>結果はlistと一致します。これはlistがどの様なものでも成り立ちます。あとで定義する一般化された重畳関数でもこれと同じ性質を持ちます。 </p><h3>コンストラクタと重畳関数</h3><p>ここで、リストとは何かということを考えます。まずリストの先頭にある要素を付け足したものはリストです。つまり、次の式を考えます。 </p><pre><code>CL-USER&gt; (listp *list*)  
 T  
 CL-USER&gt; (listp (cons *elt* *list*))  
 T  
@@ -36,4 +36,4 @@ CL-USER&gt; </code></pre><p>最初の式(listp <em>list</em>)が例のようにT
 CL-USER&gt; </code></pre><p>my-foldrがそのままlistを返す例で、渡したconsとnilは、実はこのリストのコンストラクタになっているconsとnilです。 </p><p>つまり、重畳関数というのはconsとnilでリストを組み上げるのと同じように、代わりにfuncとinitで計算をしている関数と考えることが出来ます。 </p><p>Common Lispでは後のリストへのポインタを持つ片方向リストなので、consとnilのように綺麗には行きませんが、最初に考えたreduceでも同じ事が言えます。 </p><pre><code> CL-USER&gt; (reduce #'(lambda (list elt) (append list (list elt)))  
                   (list 1 2 3) :initial-value nil)  
  (1 2 3)  
- CL-USER&gt; </code></pre><p>こちらは、リストが空リストから始まり、後に要素を付け加えていくことで成るモノと思うことによる重畳関数です。 </p><p>さて、今回はこの辺りでおしまいとします。次回は、コンストラクタと重畳関数という観点で、木構造の重畳関数と自然数の重畳関数について実装を見ていきます。 </p></div><footer id="article-footer">UP: <a href=".html"></a> PREV: <a href="fold-with-lisp-1.html">fold-with-lisp-1</a> NEXT: <a href=".html"></a></footer></main><footer id="main-footer"><div id="icnos"><a href="https://twitter.com/myao_s_moking"><img src="img/twit.png" class="icon-img" /></a><a href="https://github.com/myaosato"><img src="img/github.png" class="icon-img" /></a></div><div id="copyright">&copy;2010 Satoaki Miyao</div></footer></body></html>
+ CL-USER&gt; </code></pre><p>こちらは、リストが空リストから始まり、後に要素を付け加えていくことで成るモノと思うことによる重畳関数です。 </p><h3>次回について</h3><p>さて、今回はこの辺りでおしまいとします。次回は、コンストラクタと重畳関数という観点で、木構造の重畳関数と自然数の重畳関数について実装を見ていきます。 </p></div><footer id="article-footer">UP: <a href=".html"></a> PREV: <a href="fold-with-lisp-1.html">fold-with-lisp-1</a> NEXT: <a href="fold-with-lisp-3.html">fold-with-lisp-3</a></footer></main><footer id="main-footer"><div id="icnos"><a href="https://twitter.com/myao_s_moking"><img src="img/twit.png" class="icon-img" /></a><a href="https://github.com/myaosato"><img src="img/github.png" class="icon-img" /></a></div><div id="copyright">&copy;2010 Satoaki Miyao</div></footer></body></html>

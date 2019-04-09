@@ -146,13 +146,13 @@ main{/*記事単位を表す*/
     max-width: 960px;
     width: 94%;
     padding: 20px 0px 20px;
-    margin: 20px auto 20px;
+    margin: 10px auto 10px;
     text-align: left;
     background-color:#ffffff;
-    border-radius: 20px;
+    
 }
 header#article-header{
-    width:96%;
+    width:90%;
     padding:0px 0px 0px 10px;
     margin: 0px auto 10px;
     text-align: left;
@@ -176,38 +176,37 @@ header#article-header{
     font-size: 100%;
 }
 footer#article-footer{
-    width:96%;
-    padding: 0px 20px 0px 0px;
-    margin: 10px auto 0px;
-    text-align: right;
-    font-size: 90%;
-    line-height: 126%;
+  width:96%;
+  padding: 0px 20px 0px 0px;
+  margin: 10px auto 0px;
+  text-align: right;
+  font-size: 90%;
+  line-height: 126%;
 }
 #article-main img{/*記事内の画像の設定*/
-    display: block;
-    width: 90%;
-    height: auto;
-    margin:0px auto;
+  display: block;
+  width: 90%;
+  height: auto;
+  margin:0px auto;
 }
 div#icons{
-    margin: 0px;
-    padding: 0px;
-    text-align:center;
-    /*float:right;*/
-    margin-right:5px;
+  margin: 0px;
+  margin-bottom: 20px;
+  padding: 0px;
+  text-align:center;
 }
 div#copyright{
-margin: 0px;
-padding: 10px auto 10px;
+  margin: 0px;
+  padding: 10px auto 10px;
 }
 /*class*/
 img.icon-img{/*下部のアイコン*/
-width:30px;
-height:30px;
-margin-left:10px;
-margin-right:10px;
+  width:30px;
+  height:30px;
+  margin-left:10px;
+  margin-right:10px;
 }
 div#icons a, div#icons a:hover, div#icons a:visited{
-    color:white;
-    background-color:transparent;
+  color:white;
+  background-color:transparent;
 }

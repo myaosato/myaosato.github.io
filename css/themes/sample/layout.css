@@ -1,0 +1,26 @@
+.header {
+  margin-bottom: 5vh; 
+}
+.header_inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.main-section {
+  max-width: 1080px;
+  min-height: 50vh;
+  margin: 0 auto;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.footer {
+  margin-top: 5vh; 
+  padding-bottom: 15px; 
+}
+.footer_inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding-left: 15px;
+  padding-right: 15px;
+}

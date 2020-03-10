@@ -1,0 +1,15 @@
+.header_content {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  display: flex;
+}
+.header_content_title {
+  font-size: 2rem;
+}
+.header_content_title_sub {
+  font-size: 1rem;
+}
+
+.footer_content {
+  text-align: center;
+}

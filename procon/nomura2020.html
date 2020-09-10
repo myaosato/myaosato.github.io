@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>訥弁日記</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+JP:300,400,500,700&display=swap" rel="stylesheet"> 
+    <link href="/css/themes/sample/base.css" rel="stylesheet">
+    <link href="/css/themes/sample/layout.css" rel="stylesheet">
+    <link href="/css/themes/sample/module.css" rel="stylesheet">
+    <link href="/css/themes/sample/sample.css" rel="stylesheet">
+    <link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.0/build/styles/default.min.css">
+    <script src="/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header_inner">
+        <div class="header_content">
+          <div class="header_content_title">
+            <a href="/">訥弁日記 <span class="header_content_title_sub">- LISPing Diary -</span></a>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="main-section th-sample">
+<h1>NOMURA プログラミングコンテスト 2020</h1>
+<p>2020-06-03</p>
+<p>コンテスト中に挑戦した問題についての感想とか.</p>
+<p><a href="https://atcoder.jp/contests/nomura2020/submissions?f.Task=&f.Language=&f.Status=&f.User=myaosato">私の解答</a></p>
+<h2>A - Study Scheduling</h2>
+<p><a href="https://atcoder.jp/contests/nomura2020/tasks/nomura2020_a">問題</a></p>
+<p>２つの時刻の間の時間を分単位で求めてそこから与えられた時間を引く.</p>
+<p>いろんなケースを考えなくて良い問題設定がされているので, それだけ.</p>
+<h2>B - Postdocs</h2>
+<p><a href="https://atcoder.jp/contests/nomura2020/tasks/nomura2020_b">問題</a></p>
+<p>?をDに変えるだけ. 点数計算には高々連続した2文字について考慮すれば良い.</p>
+<p>?の前後を考えると, P?, D?, ?D, ?Pの4パターンで尽くせる.
+?をPにした場合は3つ目のみ1点加点となるが, ?をDにするとすべての場合で1点加点となるので,
+すべてDにすれば良い.</p>
+<p>例1の様に, 上記の3のパターンでPとするのも間違いではないが判定めんどいので,
+全部Dに置き換えた.</p>
+<h2>C - Folia</h2>
+<p><a href="https://atcoder.jp/contests/nomura2020/tasks/nomura2020_c">問題</a></p>
+<p>C問題解けると思っていなかったので嬉しかった.</p>
+<p>深い方から数えるのが良いのか, 浅い方から数えるのが良いのか迷って,
+最初は深い方から数えていたが, 途中から根側から数えることに変更.</p>
+<ul>
+<li>深さが1浅いノードのうち親になりうる数の倍</li>
+<li>深さが1深い葉の数と考えている深さの葉の数の和</li>
+<li>深さの2乗</li>
+</ul>
+<p>のうち最も小さいものが最大のノード数</p>
+<ul>
+<li>深さが1深い葉の数割る2(1未満は切り上げ)</li>
+</ul>
+<p>が最小のノード数として</p>
+<p>指定された葉の数と合わせて比較して木が構成可能かどうかを判断し,
+木が構成可能であれば最大ノード数を採用して, 次の深さを調べる.</p>
+<p>これを繰り返せばいい.</p>
+<p>一番最後に気付いたのは1深い葉の数が最大値にも関係するという点で,
+これを入れることで例の全ケースを通すことが出来たので提出.</p>
+<p>この問題も例として与えられているものが優しかったと思う.</p>
+
+    </main>
+    <footer class="footer">
+      <div class="footer_inner">
+        <div class="footer_content">
+          <div class="footer_content_copyright">&copy;2010 Satoaki Miyao</div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

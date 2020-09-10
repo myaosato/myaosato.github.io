@@ -8,11 +8,12 @@ body {
 }
 /* anchor */
 a {
-  color: #222;
+  color: #6A4C9C;
   text-decoration: none;
 }
-a:hover {
+a:hover,a:focus {
   color: #666;
+  text-decoration: underline;
 }
 
 /* heading */

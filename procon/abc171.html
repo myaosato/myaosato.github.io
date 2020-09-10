@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>訥弁日記</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+JP:300,400,500,700&display=swap" rel="stylesheet"> 
+    <link href="/css/themes/sample/base.css" rel="stylesheet">
+    <link href="/css/themes/sample/layout.css" rel="stylesheet">
+    <link href="/css/themes/sample/module.css" rel="stylesheet">
+    <link href="/css/themes/sample/sample.css" rel="stylesheet">
+    <link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.0/build/styles/default.min.css">
+    <script src="/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header_inner">
+        <div class="header_content">
+          <div class="header_content_title">
+            <a href="/">訥弁日記 <span class="header_content_title_sub">- LISPing Diary -</span></a>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="main-section th-sample">
+<h1>AtCoder Beginner Contest 171</h1>
+<p>2020-06-22</p>
+<p>コンテスト中に挑戦した問題についての感想とか.</p>
+<p><a href="https://atcoder.jp/contests/abc171/submissions?f.Task=&f.Language=&f.Status=&f.User=myaosato">私の解答</a></p>
+<h2>A - αlphabet</h2>
+<p><a href="https://atcoder.jp/contests/abc171/tasks/abc171_a">問題</a></p>
+<p>小文字大文字判定をする. CLだと<code>char&lt;=</code>とかで判定できる.</p>
+<p>(正確にはANSI Common Lispでは, ASCIIを拡張したような文字コード前提ではなかった様な気がするが, ソレはまた別の話.)</p>
+<p>まあ, この問題だとその他色々方法があると思う.</p>
+<h2>B - Mix Juice</h2>
+<p><a href="https://atcoder.jp/contests/abc171/tasks/abc171_b">問題</a></p>
+<p>KがN以下という条件あるので, K個選べないパターンはない.</p>
+<p>ソートして小さいものからK個足す.</p>
+<h2>C - One Quadrillion and One Dalmatians</h2>
+<p><a href="https://atcoder.jp/contests/abc171/tasks/abc171_c">問題</a></p>
+<p>名前の長さ毎に26進表記になっていると考えると分かりやすい.</p>
+<p>まず名前の長さを求めて, それから10進表記-&gt;26進表記変換に変換すれば良い.</p>
+<p>長さlの名前になる最小の数は<code>26^0 + 26^1 + 26^2 + ... + 26^(l-1) = (26^l - 1) / 25</code>と求められる. (等比級数)</p>
+<p>なお, 一度計算間違えてWAになってしまった. 焦らずやっていこう.</p>
+<h2>D - Replacing</h2>
+<p><a href="https://atcoder.jp/contests/abc171/tasks/abc171_d">問題</a></p>
+<p>和を求めるので, 数列の並びは関係ない. また, 毎回数列をなめていると間に合わないので, 数列中に出てくる数の個数を配列(ハッシュマップ)で持つ.</p>
+<p>また, この形式で毎回和を求めていたらやはり間に合わないので, 先に和を求めておく.</p>
+<p>毎回の操作で次の2つの更新を行う.</p>
+<ol>
+<li>和の更新: 変化する数の個数と1つあたりの増減がわかるのでソレを足す.</li>
+<li>配列の更新: Bの個数だけCが増えて, Bは0個になる.</li>
+</ol>
+<p>コードで書くと,</p>
+<pre><code>(incf s (* (aref a b) (- c b)))
+(incf (aref a c) (aref a b))
+(incf (aref a b) 0)
+</code></pre>
+<p>問題がうまく誘導してくれた, もし最後の状態の和のみを求める場合だったら, ちゃんと気付かなかったかもしれないので注意したい.</p>
+<p>何を求めるのか, そのためにはどういった情報が必要なのかということに注目して問題文を読むように注意しようと思う.</p>
+<p>先に和を取っておいて差分を計算していくというのは一つのお決まりのパターンのような気がする.</p>
+<h2>E - Red Scarf</h2>
+<p><a href="https://atcoder.jp/contests/abc171/tasks/abc171_e">問題</a></p>
+<p>xorのことを知ってたから解けたという感じでは有ったが, 初めてE問題が解けた.</p>
+<p>とはいえちゃんと理解しきっていなかったので実装は少し変になった.</p>
+<p>素直な実装は, 与えられた<code>a_i</code>のxorをSとして, i番目の数を<code>a_i xor S</code>で求める.</p>
+<p>xorは, 結合的で可換で, <code>A xor A = 0</code>という性質がある.</p>
+<p>与えられた数すべてのxorを取ると求めたい数をそれぞれN-1回xor取ったもののxorを取ったものとなり,
+これは, N-1が奇数であることより, xorの性質から求めたい数すべてのxorを取ったものと一致する.</p>
+<p>a_iは求めたい数のi番目のもの以外のxorを取ったものなので, これと先程求めたSのxorを取れば求めたい数が求まる.</p>
+
+    </main>
+    <footer class="footer">
+      <div class="footer_inner">
+        <div class="footer_content">
+          <div class="footer_content_copyright">&copy;2010 Satoaki Miyao</div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

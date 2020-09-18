@@ -48,3 +48,9 @@ a:hover {
   padding-right: 0.5em;
   padding-left: 0.5em;
 }
+
+.th-sample :not(pre) code {
+  background-color: #EEE;
+  color: #6A4C9C;
+  padding: 0 0.3em;
+}

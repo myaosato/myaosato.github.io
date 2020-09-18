@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>訥弁日記</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+JP:300,400,500,700&display=swap" rel="stylesheet"> 
+    <link href="/css/themes/sample/base.css" rel="stylesheet">
+    <link href="/css/themes/sample/layout.css" rel="stylesheet">
+    <link href="/css/themes/sample/module.css" rel="stylesheet">
+    <link href="/css/themes/sample/sample.css" rel="stylesheet">
+    <link rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.0/build/styles/default.min.css">
+    <script src="/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header_inner">
+        <div class="header_content">
+          <div class="header_content_title">
+            <a href="/">訥弁日記 <span class="header_content_title_sub">- LISPing Diary -</span></a>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="main-section th-sample">
+<h1>Common Lisp の package について</h1>
+<p>この記事では, プログラミング言語Common Lispのpackageと呼ばれる概念について書きます.</p>
+<p>人に向けて書いている風の備忘録なので悪しからず.</p>
+<ul>
+<li>Common Lispでのプログラミングを始めたがpackageの使い方が分かっていない</li>
+<li>Common Lispのpackageという概念について知りたい</li>
+</ul>
+<p>というような人向けになっています. 処理系や仕様としての実装の詳細には立ち入らない予定です.</p>
+<p>また, asdfを用いた依存関係の解決などについてもここでは触れません.
+(別のページに書く可能性はあります.</p>
+<h2>名前空間</h2>
+<p>プログラミング言語一般の話として, 名前空間と呼ばれる概念があります.
+これは変数名や関数名をグループ分けする機能です.</p>
+<p>プログラミング言語によって, Common Lispのようにpackageであったり, moduleやnamespaceなどと呼ばれることもありますが,
+実用的な多くのプログラミング言語にこの名前空間を実現する機能があります.</p>
+<p>何故そのような機能が存在すのでしょうか?</p>
+<p>あなたがfooという関数を提供するライブラリを作成したとして,
+別の人も同じ名前fooという名前の関数を提供するライブラリを作っているということは容易に想像出来ます.</p>
+<p>このような場合に両方のライブラリを使いたい人にとっては, 一方の関数fooだけを使うということでは具合が悪かったり,
+どちらの関数fooを用いるかということを指定したかったりということがあります.</p>
+<p>また, 使用している言語やライブラリにすでにfooという関数が定義されている時に,
+別の目的のために同じ名前の関数を作りたいということがあるかもしれません.</p>
+<p>例えば, 別のデータ構造に対して, 同じ名前firstやleft, removeなどの汎用的な言葉を使うということがあると思います.</p>
+<p>このような時に, 一見同じ名前であっても別物, 名前空間Aのfooと名前空間Bのfooというように使い分けることが出来ると便利です.</p>
+<h2>symbol</h2>
+<p>ざっくりとした言い方をすると, Common Lispでは関数名や変数名というのはsymbolです.
+symbolというオブジェクト(データ)が関数や変数を指し示すためのものとなります.</p>
+<p>これらのsymbolはpackageにinternされます. (a symbol is interned a package.)
+symbolが最初にinternされるpackageを, symbolのhome packageと呼びます.
+symbolはこのhome packageの情報を持ちます.</p>
+<p>このことをhome packageにsymbolが存在する(is present)ということもあります.</p>
+<p>symbolがあるpackageにinternされているということは,
+あるpackage内でそのsymbolにアクセス出来る(accessible)ということです.</p>
+<p>ここでアクセス出来るというのはただ参照できるということではなく,
+package prefixというものなしに参照可能ということです.</p>
+<p>symbolは複数のpackageにinternされますが, symbolが存在するパッケージは高々一つです.</p>
+<p>またsymbolがinternされているpackageでは, symbolは名前(これは文字列です)で一意に識別出来ます.</p>
+<h2>package</h2>
+<p>すでに複数回登場しましたが, packageと呼ばれるものがあります.
+これは, 名前からsymbolへの対応付けと考えることが出来ます.
+つまり, pakageは最初に説明した名前空間となっています.</p>
+<p>symbolのところでも書きましたが, あるpackageにおいては名前から一意にsymbolを識別できるため,
+同じ名前を持つsymbolは高々一つpackageにinternされています.</p>
+<p>このため, あるpackageにinternされているsymbolと同じ名前のsymbolを別に用いたい場合には,
+別のpackageにinternする必要があります.</p>
+<p>packageを作るには<code>defpackage</code>を用います.
+これの詳細な使い方に関しては最後に書きますが, ごく簡単な使い方でいうと,
+以下のようにすると名前が<code>FOO</code>であるpackageが作成されます.</p>
+<pre><code class="language-Lisp">CL-USER&gt; (defpackage :foo)
+#&lt;PACKAGE &quot;FOO&quot;&gt;
+</code></pre>
+<p><code>defpackage</code>の第一引数はpackageの名前となるもので,
+文字列, 文字, シンボル(そしてpackageそれ自身)を使うことが出来ます.</p>
+<p>これらpackageを指定するもののことをpackage designator(パッケージ指定子)と呼ばれます.
+特に, 文字列, 文字, シンボルは対応する文字列として取り扱われますが, これらはstring designator(文字列指定子)と呼ばれます.</p>
+<p><code>defpackage</code>においてpackageやsymbolの名前を表すために,
+<code>#</code>付きのkeyword symbolを用いることがありますが,
+ここではその流儀を採用しません.
+(もし気になる方は, 何故そのような流儀があるかを調べてみてください.)</p>
+<p>packageの名前は以下のように<code>package-name</code>で調べることが出来ます.
+packageはそれ自体objectですが, これを取得するためには<code>find-package</code>を用います.</p>
+<pre><code class="language-Lisp">CL-USER&gt; (defpackage :foo)
+#&lt;PACKAGE &quot;FOO&quot;&gt;
+CL-USER&gt; (find-package :foo)
+#&lt;PACKAGE &quot;FOO&quot;&gt;
+CL-USER&gt; (package-name (find-package :foo))
+&quot;FOO&quot;
+</code></pre>
+<h2>in-package</h2>
+<p>ある指定された時点において, 一つのpackageがcurrentです.
+このpackageをcurrent packageと呼び, current packageは<code>*package*</code>変数の値です.</p>
+<pre><code class="language-Lisp">CL-USER&gt; *package*
+#&lt;PACKAGE &quot;COMMON-LISP-USER&quot;&gt;
+</code></pre>
+<p>SLIMEなどのREPLでは, これまで示してきたようにプロンプトにパッケージ名が表示されます.
+COMMON-LISP-USERではなくCL-USERと表示されていますが, これはnicknameです.</p>
+<p>nicknameを確認するには, <code>package-nicknames</code>を使います.</p>
+<pre><code class="language-Lisp">CL-USER&gt; (package-nicknames *package*)
+(&quot;CL-USER&quot;)
+</code></pre>
+<p>current packageを変更するには, <code>in-package</code>を使います.</p>
+<pre><code class="language-Lisp">CL-USER&gt; (defpackage :foo)
+#&lt;PACKAGE &quot;FOO&quot;&gt;
+CL-USER&gt; (in-package :foo)
+#&lt;COMMON-LISP:PACKAGE &quot;FOO&quot;&gt;
+FOO&gt; 
+</code></pre>
+<p>current packageがpackage FOOである時にXが行われることを, package FOOの中でXをすると言うことがあります.</p>
+<p>さて, ここからCL-USERにcurrent packageを変更するために, <code>in-package</code>を使おうとしてもうまく行きません.</p>
+<pre><code class="language-Lisp">FOO&gt; (in-package :cl-user)
+; in: IN-PACKAGE :CL-USER
+;     (FOO::IN-PACKAGE :CL-USER)
+; 
+; caught COMMON-LISP:STYLE-WARNING:
+;   undefined function: FOO::IN-PACKAGE
+; 
+; compilation unit finished
+;   Undefined function:
+;     IN-PACKAGE
+;   caught 1 STYLE-WARNING condition
+</code></pre>
+<p>というのも, この状態では<code>cl:in-package</code>がパッケージFOOにinternされていないからです.</p>
+<p>また, package FOOにinternされている名前がIN-PACKAGEのシンボルは存在しないためエラーになっています.
+(ここでの例は, 正確にはそのようなシンボルをこのスコープで束縛している関数がないというエラーです.)</p>
+<p>つまり, 先にsymbolのところで書いた言葉でいうと, アクセスが出来ません.</p>
+<p>しかし, アクセス出来なくても参照することは出来ます.
+そのためには、<code>cl:in-package</code>のようにシンボル名の前に, そのsymbolのhome package名と<code>:</code>を付け加えます.</p>
+<p>この&quot;package名:&quot;のことをpackage prefixと呼びます.</p>
+<pre><code class="language-Lisp">FOO&gt; (cl:in-package :cl-user)
+#&lt;PACKAGE &quot;COMMON-LISP-USER&quot;&gt;
+CL-USER&gt; 
+</code></pre>
+<p>これで, current packageをCL-USER packageにすることが出来ました.</p>
+<h2>export</h2>
+<p>もう一度, current packageをpackage FOOに変更して, その中で関数を定義してみます.
+ここでの場合, 先程の<code>in-package</code>と同じように<code>defun</code>では<code>cl:defun</code>にアクセス出来ないので,
+<code>cl:defun</code>とします.</p>
+<pre><code class="language-Lisp">FOO&gt; (cl:defun bar () 42)
+BAR
+FOO&gt; (bar)
+42
+</code></pre>
+<p>internされていないsymbolを参照する方法を試してみましょう.
+current packageをCL-USERに戻して, <code>foo:bar</code>を呼び出してみます.</p>
+<pre><code class="language-Lisp">FOO&gt; (cl:in-package :cl-user)
+#&lt;PACKAGE &quot;COMMON-LISP-USER&quot;&gt;
+CL-USER&gt; (foo:bar) ; エラーが送出される
+</code></pre>
+<p>&quot;The symbol &quot;BAR&quot; is not external in the FOO package.&quot; とエラーが発生してしまいます.</p>
+<p>実は, packageにinternされているsymbolには2種類存在して, internal symbolとexternal symbolと呼ばれます.</p>
+<p>external symbolをpackage prefixをつけて参照する際には:(これをpackage markerと呼びます)を一つだけつけますが, internal symbolの場合には2つつけます.</p>
+<pre><code class="language-Lisp">CL-USER&gt; (foo::bar)
+42
+</code></pre>
+<p>ecternal symbolはpackageが提供する(インターフェースとなる)symbolであると考えられます.</p>
+<p>symbolをあるpackageのexternal symbolにするには, <code>export</code>を使います.</p>
+<pre><code class="language-Lisp">FOO&gt; (cl:export 'bar)
+COMMON-LISP:T
+FOO&gt; (cl:in-package :cl-user)
+#&lt;PACKAGE &quot;COMMON-LISP-USER&quot;&gt;
+CL-USER&gt; (foo:bar)
+42
+</code></pre>
+<h2>use</h2>
+<p>あるpackage(内で定義された関数等)を使用する際に, いちいちpackage prefixをつけるのは少々骨が折れます.</p>
+<p>今まで, のところで特に注意することなく使っていましたが, <code>in-package</code>や<code>defun</code>はpackage COMMON-LISP
+に存在しています. </p>
+<pre><code class="language-Lisp">CL-USER&gt; (symbol-package 'defun)
+#&lt;PACKAGE &quot;COMMON-LISP&quot;&gt;
+CL-USER&gt; (symbol-package 'in-package)
+#&lt;PACKAGE &quot;COMMON-LISP&quot;&gt;
+</code></pre>
+<p>ところで, package CL-USERでは<code>in-package</code>や<code>defun</code>をpackage prefixなしに使っています.
+つまり, CL-USERに<code>cl:defun</code>や<code>cl:in-package</code>がinternされているということです.</p>
+<p>symbolの説明で, symbolがpackageに存在することと, symbol内でpackageにアクセスできること,
+symbolが参照できることを分けて書いていたことが分かってもらえると思います.</p>
+<p>あるpackageのexternal symbolを全てinternするためには, <code>use-packace</code>を用います.</p>
+<pre><code class="language-Lisp">CL-USER&gt; (in-package :foo)
+#&lt;COMMON-LISP:PACKAGE &quot;FOO&quot;&gt;
+FOO&gt; (cl:use-package :cl)
+T
+FOO&gt; (in-package :cl-user)
+#&lt;PACKAGE &quot;COMMON-LISP-USER&quot;&gt;
+CL-USER&gt; 
+</code></pre>
+<p>上の例では, package FOOに, package CLのexternal symbol全てがinternされます.
+そのため, <code>in-package</code>がpackage prefixなしで参照出来るようになっています.</p>
+<p><em>以下, あとで書く.</em></p>
+<h2>shadow</h2>
+<h2>import</h2>
+<h2>shadowing-import</h2>
+<h2>defpackage</h2>
+<h2>参考文献</h2>
+<ul>
+<li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/11_aa.htm">CLHS 11.1.1 Introduction to Packages</a></li>
+<li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/t_symbol.htm#symbol">CLHS System Class SYMBOL</a></li>
+<li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/26_glo_a.htm#accessible">http://www.lispworks.com/documentation/HyperSpec/Body/26_glo_a.htm#accessible</a></li>
+<li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/26_glo_i.htm#interned">http://www.lispworks.com/documentation/HyperSpec/Body/26_glo_i.htm#interned</a></li>
+<li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/26_glo_p.htm#present">http://www.lispworks.com/documentation/HyperSpec/Body/26_glo_p.htm#present</a></li>
+<li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/11_aab.htm">http://www.lispworks.com/documentation/HyperSpec/Body/11_aab.htm</a></li>
+<li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/26_glo_c.htm#current_package">http://www.lispworks.com/documentation/HyperSpec/Body/26_glo_c.htm#current_package</a></li>
+<li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/26_glo_p.htm#package_prefix">http://www.lispworks.com/documentation/HyperSpec/Body/26_glo_p.htm#package_prefix</a></li>
+<li><a href="https://ci.nii.ac.jp/ncid/BA86732786">実践Common Lisp</a></li>
+</ul>
+
+    </main>
+    <footer class="footer">
+      <div class="footer_inner">
+        <div class="footer_content">
+          <div class="footer_content_copyright">&copy;2010 Satoaki Miyao</div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

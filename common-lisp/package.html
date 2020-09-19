@@ -26,6 +26,7 @@
     </header>
     <main class="main-section th-sample">
 <h1>Common Lisp の package について</h1>
+<p>2020-09-18</p>
 <p>この記事では, プログラミング言語Common Lispのpackageと呼ばれる概念について書きます.</p>
 <p>人に向けて書いている風の備忘録なので悪しからず.</p>
 <ul>
@@ -168,7 +169,7 @@ FOO&gt; (cl:in-package :cl-user)
 CL-USER&gt; (foo:bar)
 42
 </code></pre>
-<h2>use</h2>
+<h2>use-package</h2>
 <p>あるpackage(内で定義された関数等)を使用する際に, いちいちpackage prefixをつけるのは少々骨が折れます.</p>
 <p>今まで, のところで特に注意することなく使っていましたが, <code>in-package</code>や<code>defun</code>はpackage COMMON-LISP
 に存在しています. </p>
@@ -192,8 +193,55 @@ CL-USER&gt;
 </code></pre>
 <p>上の例では, package FOOに, package CLのexternal symbol全てがinternされます.
 そのため, <code>in-package</code>がpackage prefixなしで参照出来るようになっています.</p>
-<p><em>以下, あとで書く.</em></p>
 <h2>shadow</h2>
+<p>あるpackageのexternal symbolを別のpackageにinternする方法について, <code>use-package</code>を紹介しました.</p>
+<p>この方法では, external symbolを全てinternします.</p>
+<p>これだけでは, あるpackageを使いたいけれども, そのpackageのexternal symbol全てが必要ではないという場合.
+特に, あるsymbolについて同じ名前のsymbolを使いたい時に困ってしまいます.
+具体的には, 同じ名前の別の関数を定義したい場合などです.</p>
+<p>かなり極端な例ですが, 特に手を打たずに再定義などしてしまったら, 以下のようになります.</p>
+<pre><code class="language-Lisp">CL-USER&gt; (defpackage :foo)
+#&lt;PACKAGE &quot;FOO&quot;&gt;
+CL-USER&gt; (in-package :foo)
+#&lt;COMMON-LISP:PACKAGE &quot;FOO&quot;&gt;
+FOO&gt; (cl:use :cl)
+FOO&gt; (cl:use-package :cl)
+T
+FOO&gt; (defun + (&amp;rest numbers) (declare (ignore numbers)) 0)
+WARNING: redefining COMMON-LISP:+ in DEFUN
++
+FOO&gt; (+ 10 20)
+0
+FOO&gt; (in-package :cl-user)
+#&lt;PACKAGE &quot;COMMON-LISP-USER&quot;&gt;
+CL-USER&gt; (+ 10 20)
+0
+</code></pre>
+<p>これでは, package FOOに依存していない別のpackageにまで影響を及ぼしてしまいます.</p>
+<p>この場合, package FOO内で<code>+</code>(&quot;+&quot;というコード上の文字列)がsymbol <code>cl:+`を指すということが問題なので, </code>cl:+<code>ではなく, </code>foo::+`を指すように出来ればうまく行きます.</p>
+<p>このような時には, <code>shadow</code>を使います.</p>
+<pre><code class="language-Lisp">CL-USER&gt; (defpackage :foo)
+#&lt;PACKAGE &quot;FOO&quot;&gt;
+CL-USER&gt; (in-package :foo)
+#&lt;COMMON-LISP:PACKAGE &quot;FOO&quot;&gt;
+FOO&gt; (cl:use-package :cl)
+T
+FOO&gt; (shadow '+)
+T
+FOO&gt; (defun + (&amp;rest any) (declare (ignore any)) 0) 
++
+FOO&gt; (+ 42 57)
+0
+FOO&gt; (in-package :cl-user)
+#&lt;PACKAGE &quot;COMMON-LISP-USER&quot;&gt;
+CL-USER&gt; (+ 42 57)
+99
+CL-USER&gt; 
+</code></pre>
+<p><code>shadow</code>はその引数に与えられたsymbolを(デフォルトではcurrent package)package内に存在することを保証する状態にするものです.</p>
+<p>上の場合, symbol <code>+</code>がFOO packageに存在することになるので, <code>(defun + () ...)</code>で<code>+</code>が<code>cl:+`ではなくて</code>foo::+`を指すことになります.</p>
+<p>これは, Foo packageにおいて<code>foo::+</code>が他の+という名前を持つsymbolを隠してしまうというように言うことが出来るでしょう.
+(メモ: 実際の専門用語としてshadowingなのかmaskingなのか分かってないので, あとで調べる.)</p>
 <h2>import</h2>
 <h2>shadowing-import</h2>
 <h2>defpackage</h2>
@@ -207,6 +255,7 @@ CL-USER&gt;
 <li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/11_aab.htm">http://www.lispworks.com/documentation/HyperSpec/Body/11_aab.htm</a></li>
 <li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/26_glo_c.htm#current_package">http://www.lispworks.com/documentation/HyperSpec/Body/26_glo_c.htm#current_package</a></li>
 <li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/26_glo_p.htm#package_prefix">http://www.lispworks.com/documentation/HyperSpec/Body/26_glo_p.htm#package_prefix</a></li>
+<li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/f_shadow.htm">http://www.lispworks.com/documentation/HyperSpec/Body/f_shadow.htm</a></li>
 <li><a href="https://ci.nii.ac.jp/ncid/BA86732786">実践Common Lisp</a></li>
 </ul>
 

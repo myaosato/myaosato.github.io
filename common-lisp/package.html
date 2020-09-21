@@ -36,6 +36,7 @@
 <p>というような人向けになっています. 処理系や仕様としての実装の詳細には立ち入らない予定です.</p>
 <p>また, asdfを用いた依存関係の解決などについてもここでは触れません.
 (別のページに書く可能性はあります.</p>
+<p>また, この記事を書くに当たり用いている処理系は, SBCL 2.0.6です.</p>
 <h2>名前空間</h2>
 <p>プログラミング言語一般の話として, 名前空間と呼ばれる概念があります.
 これは変数名や関数名をグループ分けする機能です.</p>
@@ -131,7 +132,9 @@ FOO&gt;
 <p>また, package FOOにinternされている名前がIN-PACKAGEのシンボルは存在しないためエラーになっています.
 (ここでの例は, 正確にはそのようなシンボルをこのスコープで束縛している関数がないというエラーです.)</p>
 <p>つまり, 先にsymbolのところで書いた言葉でいうと, アクセスが出来ません.</p>
-<p>しかし, アクセス出来なくても参照することは出来ます.
+<p>(一点注意として, packageがデフォルトでどのようなsymbolをインターンしているかということは, 処理系依存です.
+そのため, このようにpackage FOOを作っていてもcl:in-packageがinternされた状態であるような処理系も存在しえます.)</p>
+<p>アクセス出来なくても参照することは出来ます.
 そのためには、<code>cl:in-package</code>のようにシンボル名の前に, そのsymbolのhome package名と<code>:</code>を付け加えます.</p>
 <p>この&quot;package名:&quot;のことをpackage prefixと呼びます.</p>
 <pre><code class="language-Lisp">FOO&gt; (cl:in-package :cl-user)
@@ -207,7 +210,7 @@ CL-USER&gt; (in-package :foo)
 FOO&gt; (cl:use :cl)
 FOO&gt; (cl:use-package :cl)
 T
-FOO&gt; (defun + (&amp;rest numbers) (declare (ignore numbers)) 0)
+FOO&gt; (defun + (&amp;rest numbers) (declare (ignore numbers)) 0) ;; SBCLでは, +を再定義しようとするとエラーとなるが, ここではそれを無視することにした.
 WARNING: redefining COMMON-LISP:+ in DEFUN
 +
 FOO&gt; (+ 10 20)
@@ -218,7 +221,7 @@ CL-USER&gt; (+ 10 20)
 0
 </code></pre>
 <p>これでは, package FOOに依存していない別のpackageにまで影響を及ぼしてしまいます.</p>
-<p>この場合, package FOO内で<code>+</code>(&quot;+&quot;というコード上の文字列)がsymbol <code>cl:+`を指すということが問題なので, </code>cl:+<code>ではなく, </code>foo::+`を指すように出来ればうまく行きます.</p>
+<p>この場合, package FOO内で<code>+</code>(コード上の文字列)が<code>cl:+</code>を指すということが問題なので,<code>cl:+</code>ではなく<code>foo::+</code>を指すように出来ればうまく行きます.</p>
 <p>このような時には, <code>shadow</code>を使います.</p>
 <pre><code class="language-Lisp">CL-USER&gt; (defpackage :foo)
 #&lt;PACKAGE &quot;FOO&quot;&gt;
@@ -239,12 +242,14 @@ CL-USER&gt; (+ 42 57)
 CL-USER&gt; 
 </code></pre>
 <p><code>shadow</code>はその引数に与えられたsymbolを(デフォルトではcurrent package)package内に存在することを保証する状態にするものです.</p>
-<p>上の場合, symbol <code>+</code>がFOO packageに存在することになるので, <code>(defun + () ...)</code>で<code>+</code>が<code>cl:+`ではなくて</code>foo::+`を指すことになります.</p>
+<p>上の場合, symbol <code>+</code>がFOO packageに存在することになるので, <code>(defun + () ...)</code>で<code>+</code>が<code>cl:+</code>ではなくて<code>foo::+</code>を指すことになります.</p>
 <p>これは, Foo packageにおいて<code>foo::+</code>が他の+という名前を持つsymbolを隠してしまうというように言うことが出来るでしょう.
 (メモ: 実際の専門用語としてshadowingなのかmaskingなのか分かってないので, あとで調べる.)</p>
 <h2>import</h2>
 <h2>shadowing-import</h2>
 <h2>defpackage</h2>
+<h2>謝辞</h2>
+<p><a href="https://github.com/hyotang666">理系依存の挙動について指摘をくださった[hyotang666</a>さん, ありがとうございます.</p>
 <h2>参考文献</h2>
 <ul>
 <li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/11_aa.htm">CLHS 11.1.1 Introduction to Packages</a></li>

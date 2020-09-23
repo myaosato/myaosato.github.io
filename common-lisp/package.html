@@ -38,33 +38,131 @@
 (別のページに書く可能性はあります.</p>
 <p>また, この記事を書くに当たり用いている処理系は, SBCL 2.0.6です.</p>
 <h2>名前空間</h2>
-<p>プログラミング言語一般の話として, 名前空間と呼ばれる概念があります.
-これは変数名や関数名をグループ分けする機能です.</p>
-<p>プログラミング言語によって, Common Lispのようにpackageであったり, moduleやnamespaceなどと呼ばれることもありますが,
-実用的な多くのプログラミング言語にこの名前空間を実現する機能があります.</p>
-<p>何故そのような機能が存在すのでしょうか?</p>
-<p>あなたがfooという関数を提供するライブラリを作成したとして,
-別の人も同じ名前fooという名前の関数を提供するライブラリを作っているということは容易に想像出来ます.</p>
-<p>このような場合に両方のライブラリを使いたい人にとっては, 一方の関数fooだけを使うということでは具合が悪かったり,
-どちらの関数fooを用いるかということを指定したかったりということがあります.</p>
-<p>また, 使用している言語やライブラリにすでにfooという関数が定義されている時に,
-別の目的のために同じ名前の関数を作りたいということがあるかもしれません.</p>
-<p>例えば, 別のデータ構造に対して, 同じ名前firstやleft, removeなどの汎用的な言葉を使うということがあると思います.</p>
-<p>このような時に, 一見同じ名前であっても別物, 名前空間Aのfooと名前空間Bのfooというように使い分けることが出来ると便利です.</p>
-<h2>symbol</h2>
-<p>ざっくりとした言い方をすると, Common Lispでは関数名や変数名というのはsymbolです.
-symbolというオブジェクト(データ)が関数や変数を指し示すためのものとなります.</p>
-<p>これらのsymbolはpackageにinternされます. (a symbol is interned a package.)
-symbolが最初にinternされるpackageを, symbolのhome packageと呼びます.
+<p>プログラミング言語一般の話として, 名前空間と呼ばれる概念があります.</p>
+<p>これはコード中で用いられるある名前(コンパイラやインタプリタが読み取る文字列)に対して,
+その名前が何を指しているのかという対応付けのことです.</p>
+<p>複数の名前空間を扱えるプログラミング言語では, この対応付け(名前空間)を分けることで,
+不必要に冗長な命名規則(いつでもどこでも接頭辞が付くような書き方など)を除きつつ,
+名前の衝突を避けることが出来ます.</p>
+<p>ここで名前の衝突というのは, プログラムが扱う別々の対象について, ある同じ名前がつけられてしまうことを言います.</p>
+<p>この時, 名前から一意にプログラムが扱う対象を引くことができなくなるため, 困ります.
+例えば, 意図せず関数が再定義されたり, プログラムがクラッシュしてしまうことがあるかもしれません.</p>
+<p>多くのプログラミング言語ではこれを回避するために, 再定義に関するエラーを出したり,
+複数の名前空間を持つことで一見同じ名前であっても, 名前空間Aのfooはbarを指して名前空間Bのfooはbazを指すというようなことが出来るようになっています.</p>
+<h2>symbolとpackage</h2>
+<p>Common Lispで, 読み取り機がコードを読み取って, コードの表現を値にするまで, 例えば,</p>
+<pre><code class="language-Lisp">CL-USER&gt; pi
+3.141592653589793d0
+</code></pre>
+<p>これは, piという名前から値<code>3.141592653589793d0</code>を引いています. これを理解するためには,</p>
+<ul>
+<li>piという文字列を読み取ってsymbol <code>PI</code>を引く</li>
+<li>symbol <code>PI</code>から値<code>3.141592653589793d0</code>を引く</li>
+</ul>
+<p>という2つの対応付けのことを考えないといけません.</p>
+<p>この文章のテーマであるpackageというのは, 1つ目の対応付け(コード上の文字列からsymbolを引くということ)に関連します.</p>
+<p>(2つ目の対応付けについては, ざっくりとした言い方をすると, Common Lispでは関数名や変数名がsymbolで,
+symbolというオブジェクト(データ)が関数や変数を指し示すためのものとなります.)</p>
+<p>symbolとpackageの関係からsymbolに次の3つの状態があると考えると分かりやすいです.</p>
+<ul>
+<li>symbolが参照出来る. (A symbol can be referred to.)</li>
+<li>あるpackage内でsymbolがアクセス出来る. (A symbol is accessible in a package.)</li>
+<li>あるpackageにsymbolが存在している. (A symbol is present in a package.)</li>
+</ul>
+<p>参照できるというのは, その名の通りあるsymbolを参照する方法がある状態であり,
+メモリ上のどこかにそのsymbolがあるという程度のことで, これだけではあまりpackageとは関係がありません.</p>
+<p>どのようにしてsymbolを参照できるのかということに, packageが関わってきます.</p>
+<h2>current package</h2>
+<p>pacakgeとsymbolの関係の前に, current packageについて説明しておきます.</p>
+<p>ある時点で, 一つのpackageがcurrentです. このpackageをcurrent pacakgeと呼びます.
+これは, <code>*package*</code>変数を評価した時の値です.</p>
+<p>あるpackage内でsymbolがアクセス出来る.
+と上で書きましたが, これは, そのあるpackageがcurrent packageである時にpackage prefixなしにsymbolを参照できることを指します.
+(package prefixについては後述します.)</p>
+<p>この時, symbolはそのpackageにinternされていると言います. (a symbol is interned in a package.)</p>
+<p>symbolが最初にinternされるpackageを, symbolのhome packageと呼びます.
 symbolはこのhome packageの情報を持ちます.</p>
 <p>このことをhome packageにsymbolが存在する(is present)ということもあります.</p>
-<p>symbolがあるpackageにinternされているということは,
-あるpackage内でそのsymbolにアクセス出来る(accessible)ということです.</p>
-<p>ここでアクセス出来るというのはただ参照できるということではなく,
-package prefixというものなしに参照可能ということです.</p>
+<p>これが上で挙げた3つ目の状態(あるpackageにsymbolが存在している)です.</p>
+<p>home packageは<code>symbol-package</code>で確認できます.</p>
+<pre><code class="language-Lisp">CL-USER&gt; (symbol-package 'pi)
+#&lt;PACKAGE &quot;COMMON-LISP&quot;&gt;
+</code></pre>
+<p>実は, home packageつまり<code>symbol-package</code>で確認できるpackageを変更することが出来ますが,
+ここではそのことは考えません.</p>
 <p>symbolは複数のpackageにinternされますが, symbolが存在するパッケージは高々一つです.</p>
-<p>またsymbolがinternされているpackageでは, symbolは名前(これは文字列です)で一意に識別出来ます.</p>
-<h2>package</h2>
+<p>またsymbolがinternされているpackageでは, symbolは名前(これはコード上の文字列です)で一意に識別出来ます.</p>
+<h2>package prefix</h2>
+<p>変数<code>PI</code>の例を見てみます.</p>
+<pre><code class="language-Lisp">CL-USER&gt; pi
+3.141592653589793d0
+CL-USER&gt; cl:pi
+3.141592653589793d0
+CL-USER&gt; cl::pi
+3.141592653589793d0
+CL-USER&gt; cl-user::pi
+3.141592653589793d0
+</code></pre>
+<p>これら, <code>pi</code>, <code>cl:pi</code>, <code>cl::pi</code>, <code>cl-user::pi</code>は, 全て同じsymbolを指しています.</p>
+<p><code>pi</code>の前についている, <code>cl:</code>や<code>cl-user::</code>等がpackage prefixの例になります.</p>
+<p>packageを表す文字列の後に, コロンが1つあるいは2つが続いて, その後にsymbolの名前を表す文字列が続きます.</p>
+<p>コロンの数による違いは, 指定するpackageにおいて,
+symbolがinternalなのかexternalなのかによって動作が変わります.</p>
+<p>なお, このコロンのことをpackage markerと呼びます.</p>
+<h2>internal と external</h2>
+<p>symbolがpackageにinternされるということは既に書きました.</p>
+<p>packageにinternされているsymbolは2つの観点からそれぞれ, 2種類の状態があります.</p>
+<p>1つ目の2種類は, 次の２つです.</p>
+<ul>
+<li>internal</li>
+<li>external</li>
+</ul>
+<p>これは, symbolがexternalかどうかという観点です.</p>
+<p>あるpackageにおいてsymbolがexternalであるというのは, そのsymbolが, そのpackageが外部に提供するインターフェースの一つであることを指します.</p>
+<p>上で書いた<code>PI</code>の例で, <code>cl:pi</code>とclというパッケージ名の後にはコロンが一つでしたが, これはCOMMON-LISP packageにおいてsymbol <code>PI</code>がexternalであるからです.</p>
+<p>externalなsymbolのみが, パッケージ名を表す文字列のあとにコロン1つで参照できます.</p>
+<p>internalなsymbolでも, パッケージ名を表す文字列のあとにコロン2つで参照できますが, コロン1つでは参照できません.
+externalなsymbolはコロン2つでも参照できます.</p>
+<p>current packageであるsymbolがinternalなのかexternalなのかということは, <code>intern</code>の第一引数にsymbolの名前, 第二引数を指定しないとすると確認することが出来ます.</p>
+<pre><code class="language-Lisp">CL-USER&gt; (in-package :cl)
+#&lt;PACKAGE &quot;COMMON-LISP&quot;&gt;
+CL&gt; (intern &quot;PI&quot;)
+PI
+:EXTERNAL
+</code></pre>
+<p><code>in-package</code>はcurrent packageを切り替えます. また先程から登場しているcl(CL)というのはCOMMON-LISP packageのニックネームです.
+(ニックネーム機能については後で紹介します.)</p>
+<p>既にinternされているsymbolの名前を<code>intern</code>に渡してやると, そのsymbolとsymbolがinternalかexternalかということを返します.</p>
+<p><code>:INTERNAL</code>あるいは<code>:INHERITED</code>が返ってくる場合は, current packageにおいて, そのsymbolはcurrent packageでinternalです.
+<code>:EXTERNAL</code>が返ってくる場合は, current packageにおいて, そのsymbolはcurrent packageでexternalです.</p>
+<p>inheritedについては, 後で説明する意味がありますが,  このやり方でinheritedと返ってきたときには, そのsymbolはcurrent packageでinternalであることも意味します.</p>
+<pre><code class="language-Lisp">CL-USER&gt; (INTERN &quot;PI&quot;)
+PI
+:INHERITED
+CL-USER&gt; (INTERN &quot;PI&quot; :cl)
+PI
+:EXTERNAL
+</code></pre>
+<p>このように第2引数を指定すると, current package以外のpackageでの扱いについて確認することも出来ます.</p>
+<h2>present と inherited</h2>
+<p>2つ目の観点はpackageに存在するsymbolかどうか.
+つまり, あるpackageがそのsymbolのhome packageであるかどうかということです.</p>
+<p>あるpackageにおいてsymbolは,</p>
+<ul>
+<li>present</li>
+<li>inherited</li>
+</ul>
+<p>のどちらかです. 上のpresentは既に紹介しました. inheritedというのはそうではない状態です.</p>
+<p>つまり, あるpackageからそのsymbolにアクセスは出来るが, そのsymbolのhome packageがそのpackageでは無いということです.
+これの例は, COMMON-LISP-USER packageにおける<code>PI</code>です.</p>
+<pre><code class="language-Lisp">CL-USER&gt; *package*
+#&lt;PACKAGE &quot;COMMON-LISP-USER&quot;&gt;
+CL-USER&gt; (symbol-package 'pi)
+#&lt;PACKAGE &quot;COMMON-LISP&quot;&gt;
+</code></pre>
+<p>current packageがCOMMON-LISP-USERであって, package prefixなしに参照は出来ますが,
+symbol <code>PI</code>のhome packageはCOMMON-LISPで, COMMON-LISP-USERではありません.</p>
+<h2>defpackageとin-package ここからまだ書き直している途中</h2>
 <p>すでに複数回登場しましたが, packageと呼ばれるものがあります.
 これは, 名前からsymbolへの対応付けと考えることが出来ます.
 つまり, pakageは最初に説明した名前空間となっています.</p>

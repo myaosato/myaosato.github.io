@@ -162,24 +162,18 @@ CL-USER&gt; (symbol-package 'pi)
 </code></pre>
 <p>current packageがCOMMON-LISP-USERであって, package prefixなしに参照は出来ますが,
 symbol <code>PI</code>のhome packageはCOMMON-LISPで, COMMON-LISP-USERではありません.</p>
-<h2>defpackageとin-package ここからまだ書き直している途中</h2>
-<p>すでに複数回登場しましたが, packageと呼ばれるものがあります.
-これは, 名前からsymbolへの対応付けと考えることが出来ます.
-つまり, pakageは最初に説明した名前空間となっています.</p>
-<p>symbolのところでも書きましたが, あるpackageにおいては名前から一意にsymbolを識別できるため,
-同じ名前を持つsymbolは高々一つpackageにinternされています.</p>
-<p>このため, あるpackageにinternされているsymbolと同じ名前のsymbolを別に用いたい場合には,
-別のpackageにinternする必要があります.</p>
-<p>packageを作るには<code>defpackage</code>を用います.
-これの詳細な使い方に関しては最後に書きますが, ごく簡単な使い方でいうと,
-以下のようにすると名前が<code>FOO</code>であるpackageが作成されます.</p>
+<h2>defpackage</h2>
+<p>symbolとpackageの関係性をざっと説明しました.
+これらをどのように制御するのかということが, Common Lispにおけるpackage管理になります.</p>
+<p>とはいえ, packageを作らないことには始まりません.
+<code>defpackage</code>を使ってpackageを作ることが出来ます.</p>
+<p>以下のようにすると名前が<code>FOO</code>であるpackageが作成されます.</p>
 <pre><code class="language-Lisp">CL-USER&gt; (defpackage :foo)
 #&lt;PACKAGE &quot;FOO&quot;&gt;
 </code></pre>
 <p><code>defpackage</code>の第一引数はpackageの名前となるもので,
-文字列, 文字, シンボル(そしてpackageそれ自身)を使うことが出来ます.</p>
-<p>これらpackageを指定するもののことをpackage designator(パッケージ指定子)と呼ばれます.
-特に, 文字列, 文字, シンボルは対応する文字列として取り扱われますが, これらはstring designator(文字列指定子)と呼ばれます.</p>
+文字列, 文字, シンボルを使うことが出来ます. これらはstring designator(文字列指定子)と呼ばれます.</p>
+<p>また, ここでは使えませんが, これらにpackage自身を合わせたpackageを指定するもののことを, package designator(パッケージ指定子)と呼びます.</p>
 <p><code>defpackage</code>においてpackageやsymbolの名前を表すために,
 <code>#</code>付きのkeyword symbolを用いることがありますが,
 ここではその流儀を採用しません.
@@ -194,96 +188,88 @@ CL-USER&gt; (package-name (find-package :foo))
 &quot;FOO&quot;
 </code></pre>
 <h2>in-package</h2>
-<p>ある指定された時点において, 一つのpackageがcurrentです.
-このpackageをcurrent packageと呼び, current packageは<code>*package*</code>変数の値です.</p>
-<pre><code class="language-Lisp">CL-USER&gt; *package*
-#&lt;PACKAGE &quot;COMMON-LISP-USER&quot;&gt;
-</code></pre>
-<p>SLIMEなどのREPLでは, これまで示してきたようにプロンプトにパッケージ名が表示されます.
-COMMON-LISP-USERではなくCL-USERと表示されていますが, これはnicknameです.</p>
-<p>nicknameを確認するには, <code>package-nicknames</code>を使います.</p>
-<pre><code class="language-Lisp">CL-USER&gt; (package-nicknames *package*)
-(&quot;CL-USER&quot;)
-</code></pre>
 <p>current packageを変更するには, <code>in-package</code>を使います.</p>
 <pre><code class="language-Lisp">CL-USER&gt; (defpackage :foo)
 #&lt;PACKAGE &quot;FOO&quot;&gt;
 CL-USER&gt; (in-package :foo)
 #&lt;COMMON-LISP:PACKAGE &quot;FOO&quot;&gt;
-FOO&gt; 
+FOO&gt; cl:*package*
+#&lt;COMMON-LISP:PACKAGE &quot;FOO&quot;&gt;
 </code></pre>
-<p>current packageがpackage FOOである時にXが行われることを, package FOOの中でXをすると言うことがあります.</p>
-<p>さて, ここからCL-USERにcurrent packageを変更するために, <code>in-package</code>を使おうとしてもうまく行きません.</p>
-<pre><code class="language-Lisp">FOO&gt; (in-package :cl-user)
-; in: IN-PACKAGE :CL-USER
-;     (FOO::IN-PACKAGE :CL-USER)
-; 
-; caught COMMON-LISP:STYLE-WARNING:
-;   undefined function: FOO::IN-PACKAGE
-; 
-; compilation unit finished
-;   Undefined function:
-;     IN-PACKAGE
-;   caught 1 STYLE-WARNING condition
+<p>SLIMEなどのREPLでは, これまで示してきたようにプロンプトにcurrent packageの名が表示されます.</p>
+<p>COMMON-LISP-USERではなくCL-USERと表示されていますが, これはnicknameです.</p>
+<p>nicknameを確認するには, <code>package-nicknames</code>を使います.</p>
+<pre><code class="language-Lisp">CL-USER&gt; (package-nicknames *package*)
+(&quot;CL-USER&quot;)
 </code></pre>
-<p>というのも, この状態では<code>cl:in-package</code>がパッケージFOOにinternされていないからです.</p>
-<p>また, package FOOにinternされている名前がIN-PACKAGEのシンボルは存在しないためエラーになっています.
-(ここでの例は, 正確にはそのようなシンボルをこのスコープで束縛している関数がないというエラーです.)</p>
-<p>つまり, 先にsymbolのところで書いた言葉でいうと, アクセスが出来ません.</p>
-<p>(一点注意として, packageがデフォルトでどのようなsymbolをインターンしているかということは, 処理系依存です.
-そのため, このようにpackage FOOを作っていてもcl:in-packageがinternされた状態であるような処理系も存在しえます.)</p>
-<p>アクセス出来なくても参照することは出来ます.
-そのためには、<code>cl:in-package</code>のようにシンボル名の前に, そのsymbolのhome package名と<code>:</code>を付け加えます.</p>
-<p>この&quot;package名:&quot;のことをpackage prefixと呼びます.</p>
-<pre><code class="language-Lisp">FOO&gt; (cl:in-package :cl-user)
-#&lt;PACKAGE &quot;COMMON-LISP-USER&quot;&gt;
-CL-USER&gt; 
+<p>ここでcurrent packageがpackage FOOの時に, <code>cl:*package*</code>とpackage prefixをつけたのは,
+このsymbolがpackage FOOにinternされていないからです.</p>
+<p><code>defpackage</code>でpackageを作成する時に, どんなsymbolがinternされるかということは実装依存ですが,
+ここで用いている処理系(SBCL)ではどのsymbolもinternされていません.</p>
+<h2>intern</h2>
+<p>symbolをpackageにinternしてみます. <code>cl:intern</code>を使ってみましょう.</p>
+<pre><code class="language-Lisp">CL-USER&gt; (defpackage :foo)
+#&lt;PACKAGE &quot;FOO&quot;&gt;
+CL-USER&gt; (in-package :foo)
+#&lt;COMMON-LISP:PACKAGE &quot;FOO&quot;&gt;
+FOO&gt; (cl:intern &quot;HOGE&quot;)
+HOGE
+COMMON-LISP:NIL
+FOO&gt; (cl:intern &quot;HOGE&quot;)
+HOGE
+:INTERNAL
 </code></pre>
-<p>これで, current packageをCL-USER packageにすることが出来ました.</p>
+<p>このように, その名前を持つsymbolがinternされていない時に, <code>cl:intern</code>を(第2引数を省略して)使うと,
+symbolが作成され, current packageにその名前を持つsymbolがinternされます.</p>
+<p>この場合は, symbol <code>foo::hoge</code>がpackage FOOにinternされます.</p>
+<p>しかし, もっと実用的に出てくるものとして, 関数定義でもsymbolはinternされます.</p>
+<p><code>cl:defun</code>を使って関数を定義してみます.</p>
+<pre><code class="language-Lisp">FOO&gt; (cl:defun piyo () 42)
+PIYO
+FOO&gt; (cl:intern &quot;PIYO&quot;)
+PIYO
+:INTERNAL
+</code></pre>
+<p>この例ですと, 関数名になるsymbol <code>foo::piyo</code>がcurrent package (package FOO)にinternされます. </p>
+<p>その実, symbolは読み取られるとcurrent packageにinternされます.</p>
+<pre><code class="language-Lisp">FOO&gt; 'fuga
+FUGA
+FOO&gt; (cl:intern &quot;FUGA&quot;)
+FUGA
+:INTERNAL
+</code></pre>
 <h2>export</h2>
-<p>もう一度, current packageをpackage FOOに変更して, その中で関数を定義してみます.
-ここでの場合, 先程の<code>in-package</code>と同じように<code>defun</code>では<code>cl:defun</code>にアクセス出来ないので,
-<code>cl:defun</code>とします.</p>
-<pre><code class="language-Lisp">FOO&gt; (cl:defun bar () 42)
-BAR
-FOO&gt; (bar)
-42
+<p>symbolはあるpackageに対してinternalとexternalという２つの種類の状態があると先に紹介しましたが,
+直前のin-packageの説明でsymbolがpackageにinternされてinternal symbolになるところは確認できました.</p>
+<p>これらをexternalにするには, <code>cl:export</code>を使います.</p>
+<pre><code class="language-Lisp">FOO&gt; (cl:export 'hoge)
+COMMON-LISP:T
+FOO&gt; (cl:intern &quot;HOGE&quot;)
+HOGE
+:EXTERNAL
 </code></pre>
-<p>internされていないsymbolを参照する方法を試してみましょう.
-current packageをCL-USERに戻して, <code>foo:bar</code>を呼び出してみます.</p>
+<p>exportの第一引数にはsymbolのlistを渡すことも出来ます.</p>
+<pre><code class="language-Lisp">FOO&gt; (cl:export '(piyo fuga))
+COMMON-LISP:T
+FOO&gt; (cl:intern &quot;PIYO&quot;)
+PIYO
+:EXTERNAL
+FOO&gt; (cl:intern &quot;FUGA&quot;)
+FUGA
+:EXTERNAL
+</code></pre>
+<p>先に書いたとおり, external symbolはコロンが一つのpackage prefixで参照出来ます.</p>
 <pre><code class="language-Lisp">FOO&gt; (cl:in-package :cl-user)
 #&lt;PACKAGE &quot;COMMON-LISP-USER&quot;&gt;
-CL-USER&gt; (foo:bar) ; エラーが送出される
-</code></pre>
-<p>&quot;The symbol &quot;BAR&quot; is not external in the FOO package.&quot; とエラーが発生してしまいます.</p>
-<p>実は, packageにinternされているsymbolには2種類存在して, internal symbolとexternal symbolと呼ばれます.</p>
-<p>external symbolをpackage prefixをつけて参照する際には:(これをpackage markerと呼びます)を一つだけつけますが, internal symbolの場合には2つつけます.</p>
-<pre><code class="language-Lisp">CL-USER&gt; (foo::bar)
+CL-USER&gt; (foo:piyo)
 42
-</code></pre>
-<p>ecternal symbolはpackageが提供する(インターフェースとなる)symbolであると考えられます.</p>
-<p>symbolをあるpackageのexternal symbolにするには, <code>export</code>を使います.</p>
-<pre><code class="language-Lisp">FOO&gt; (cl:export 'bar)
-COMMON-LISP:T
-FOO&gt; (cl:in-package :cl-user)
-#&lt;PACKAGE &quot;COMMON-LISP-USER&quot;&gt;
-CL-USER&gt; (foo:bar)
-42
+CL-USER&gt; 'foo:hoge
+FOO:HOGE
 </code></pre>
 <h2>use-package</h2>
-<p>あるpackage(内で定義された関数等)を使用する際に, いちいちpackage prefixをつけるのは少々骨が折れます.</p>
-<p>今まで, のところで特に注意することなく使っていましたが, <code>in-package</code>や<code>defun</code>はpackage COMMON-LISP
-に存在しています. </p>
-<pre><code class="language-Lisp">CL-USER&gt; (symbol-package 'defun)
-#&lt;PACKAGE &quot;COMMON-LISP&quot;&gt;
-CL-USER&gt; (symbol-package 'in-package)
-#&lt;PACKAGE &quot;COMMON-LISP&quot;&gt;
-</code></pre>
 <p>ところで, package CL-USERでは<code>in-package</code>や<code>defun</code>をpackage prefixなしに使っています.
 つまり, CL-USERに<code>cl:defun</code>や<code>cl:in-package</code>がinternされているということです.</p>
-<p>symbolの説明で, symbolがpackageに存在することと, symbol内でpackageにアクセスできること,
-symbolが参照できることを分けて書いていたことが分かってもらえると思います.</p>
-<p>あるpackageのexternal symbolを全てinternするためには, <code>use-packace</code>を用います.</p>
+<p><code>cl:use-packace</code>を使うと, あるpackageのexternal symbolを全てinternすることが出来ます.</p>
 <pre><code class="language-Lisp">CL-USER&gt; (in-package :foo)
 #&lt;COMMON-LISP:PACKAGE &quot;FOO&quot;&gt;
 FOO&gt; (cl:use-package :cl)
@@ -292,34 +278,77 @@ FOO&gt; (in-package :cl-user)
 #&lt;PACKAGE &quot;COMMON-LISP-USER&quot;&gt;
 CL-USER&gt; 
 </code></pre>
-<p>上の例では, package FOOに, package CLのexternal symbol全てがinternされます.
-そのため, <code>in-package</code>がpackage prefixなしで参照出来るようになっています.</p>
+<p>上の例では, package FOOに, package CL(package COMMON-LISP)のexternal symbol全てがinternされます.
+そのため<code>in-package</code>がpackage prefixなしで参照出来るようになりました.</p>
+<p>これをpackage FOOがpackage CLを使うと言います.</p>
+<p>使っているpackageはpacakge-use-listで確認できます.</p>
+<pre><code class="language-Lisp">FOO&gt; (package-use-list :foo)
+(#&lt;PACKAGE &quot;COMMON-LISP&quot;&gt;)
+</code></pre>
+<p>Common Lisp処理系を立ち上げると, current packageはpackage COMMON-LISP-USERになっています.
+package COMMON-LISP-USERは, package COMMON-LISPを使っています.</p>
 <h2>shadow</h2>
 <p>あるpackageのexternal symbolを別のpackageにinternする方法について, <code>use-package</code>を紹介しました.</p>
 <p>この方法では, external symbolを全てinternします.</p>
 <p>これだけでは, あるpackageを使いたいけれども, そのpackageのexternal symbol全てが必要ではないという場合.
 特に, あるsymbolについて同じ名前のsymbolを使いたい時に困ってしまいます.
 具体的には, 同じ名前の別の関数を定義したい場合などです.</p>
-<p>かなり極端な例ですが, 特に手を打たずに再定義などしてしまったら, 以下のようになります.</p>
+<p>これまでの例を一度忘れて, package FOO内で関数barを定義したとします.</p>
 <pre><code class="language-Lisp">CL-USER&gt; (defpackage :foo)
 #&lt;PACKAGE &quot;FOO&quot;&gt;
 CL-USER&gt; (in-package :foo)
 #&lt;COMMON-LISP:PACKAGE &quot;FOO&quot;&gt;
-FOO&gt; (cl:use :cl)
 FOO&gt; (cl:use-package :cl)
 T
-FOO&gt; (defun + (&amp;rest numbers) (declare (ignore numbers)) 0) ;; SBCLでは, +を再定義しようとするとエラーとなるが, ここではそれを無視することにした.
-WARNING: redefining COMMON-LISP:+ in DEFUN
-+
-FOO&gt; (+ 10 20)
-0
-FOO&gt; (in-package :cl-user)
-#&lt;PACKAGE &quot;COMMON-LISP-USER&quot;&gt;
-CL-USER&gt; (+ 10 20)
-0
+FOO&gt; (defun bar () 1)
+BAR
+FOO&gt; (export 'bar)
+T
 </code></pre>
-<p>これでは, package FOOに依存していない別のpackageにまで影響を及ぼしてしまいます.</p>
-<p>この場合, package FOO内で<code>+</code>(コード上の文字列)が<code>cl:+</code>を指すということが問題なので,<code>cl:+</code>ではなく<code>foo::+</code>を指すように出来ればうまく行きます.</p>
+<p>この状態で, current packageをpackage CL-USERに戻して, package FOOを使うことにします.</p>
+<pre><code class="language-Lisp">FOO&gt; (in-package :cl-user)
+#&lt;PACKAGE &quot;COMMON-LISP-USER&quot;&gt;
+CL-USER&gt; (use-package :foo)
+T
+CL-USER&gt; (bar)
+1
+</code></pre>
+<p>この時, 関数<code>bar</code>を再定義すると, それはsymbol <code>foo:bar</code>に結び付けられてしまします.</p>
+<pre><code class="language-Lisp">CL-USER&gt; (defun bar () 2)
+WARNING: redefining FOO:BAR in DEFUN
+BAR
+CL-USER&gt; (bar)
+2
+CL-USER&gt; (in-package :foo)
+#&lt;PACKAGE &quot;FOO&quot;&gt;
+FOO&gt; (bar)
+2
+</code></pre>
+<p>わざとこのようにしたいのならともかくとしても,
+これではpackage FOOに依存している別のpackageにまで影響を及ぼしてしまいます.</p>
+<p>逆に, 何らかのpackageを使う際に,
+既にinternされているsymbolと同じ名前のものを取り込もうとするとエラーとなります.</p>
+<pre><code class="language-Lisp">CL-USER&gt; (defpackage :hoge)
+#&lt;PACKAGE &quot;HOGE&quot;&gt;
+CL-USER&gt; (in-package :hoge)
+#&lt;COMMON-LISP:PACKAGE &quot;HOGE&quot;&gt;
+HOGE&gt; (cl:intern &quot;BAR&quot;)
+BAR
+COMMON-LISP:NIL
+HOGE&gt; (cl:export 'bar)
+COMMON-LISP:T
+HOGE&gt; (cl:in-package :cl-user)
+#&lt;PACKAGE &quot;COMMON-LISP-USER&quot;&gt;
+CL-USER&gt; (use-package :hoge)
+; ここで以下のエラーが出ます.
+; USE-PACKAGE #&lt;PACKAGE &quot;HOGE&quot;&gt; causes name-conflicts in
+; #&lt;PACKAGE &quot;COMMON-LISP-USER&quot;&gt; between the following symbols:
+;   HOGE:BAR, FOO:BAR
+;    [Condition of type NAME-CONFLICT]
+</code></pre>
+<p>前者の場合,
+package CL-USER内でbarがpackag FOOにinternされている<code>foo:bar</code>を指すということが問題なので,
+代わりに, package CL-USERに存在するsymbol <code>bar</code>を指すように出来ればうまく行きます.</p>
 <p>このような時には, <code>shadow</code>を使います.</p>
 <pre><code class="language-Lisp">CL-USER&gt; (defpackage :foo)
 #&lt;PACKAGE &quot;FOO&quot;&gt;
@@ -327,23 +356,37 @@ CL-USER&gt; (in-package :foo)
 #&lt;COMMON-LISP:PACKAGE &quot;FOO&quot;&gt;
 FOO&gt; (cl:use-package :cl)
 T
-FOO&gt; (shadow '+)
+FOO&gt; (defun bar () 1)
+BAR
+FOO&gt; (export 'bar)
 T
-FOO&gt; (defun + (&amp;rest any) (declare (ignore any)) 0) 
-+
-FOO&gt; (+ 42 57)
-0
 FOO&gt; (in-package :cl-user)
 #&lt;PACKAGE &quot;COMMON-LISP-USER&quot;&gt;
-CL-USER&gt; (+ 42 57)
-99
-CL-USER&gt; 
+CL-USER&gt; (use-package :foo)
+T
+CL-USER&gt; (shadow 'bar)
+T
+CL-USER&gt; (defun bar () 2)
+BAR
+CL-USER&gt; (bar)
+2
+CL-USER&gt; (symbol-package 'bar)
+#&lt;PACKAGE &quot;COMMON-LISP-USER&quot;&gt;
+CL-USER&gt; (in-package :foo)
+#&lt;PACKAGE &quot;FOO&quot;&gt;
+FOO&gt; (bar)
+1
+FOO&gt; (symbol-package 'bar)
+#&lt;PACKAGE &quot;FOO&quot;&gt;
 </code></pre>
-<p><code>shadow</code>はその引数に与えられたsymbolを(デフォルトではcurrent package)package内に存在することを保証する状態にするものです.</p>
-<p>上の場合, symbol <code>+</code>がFOO packageに存在することになるので, <code>(defun + () ...)</code>で<code>+</code>が<code>cl:+</code>ではなくて<code>foo::+</code>を指すことになります.</p>
-<p>これは, Foo packageにおいて<code>foo::+</code>が他の+という名前を持つsymbolを隠してしまうというように言うことが出来るでしょう.
+<p><code>shadow</code>は,
+第1引数に与えられたsymbolが第2引数で指定するpackage内に存在することを保証する状態にするものです.
+第2引数を省略した場合にはcurrent packageになります.</p>
+<p>上の場合, symbol <code>bar</code>がpackage CL-USERに存在することになるので, <code>(defun bar () ...)</code>で<code>bar</code>が,
+package FOOに存在する<code>bar</code>ではなくて, <code>cl-user::bar</code>を指すことになります.</p>
+<p>これは, package CL-USERにおいて<code>cl-user::bar</code>が, 他のbarという名前を持つsymbolをまるで隠してしまうように振る舞います.
 (メモ: 実際の専門用語としてshadowingなのかmaskingなのか分かってないので, あとで調べる.)</p>
-<h2>import</h2>
+<h2>import ここから書きかけ</h2>
 <h2>shadowing-import</h2>
 <h2>defpackage</h2>
 <h2>謝辞</h2>
@@ -359,6 +402,8 @@ CL-USER&gt;
 <li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/26_glo_c.htm#current_package">http://www.lispworks.com/documentation/HyperSpec/Body/26_glo_c.htm#current_package</a></li>
 <li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/26_glo_p.htm#package_prefix">http://www.lispworks.com/documentation/HyperSpec/Body/26_glo_p.htm#package_prefix</a></li>
 <li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/f_shadow.htm">http://www.lispworks.com/documentation/HyperSpec/Body/f_shadow.htm</a></li>
+<li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/m_defpkg.htm">http://www.lispworks.com/documentation/HyperSpec/Body/m_defpkg.htm</a></li>
+<li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/11_abb.htm">http://www.lispworks.com/documentation/HyperSpec/Body/11_abb.htm</a></li>
 <li><a href="https://ci.nii.ac.jp/ncid/BA86732786">実践Common Lisp</a></li>
 </ul>
 

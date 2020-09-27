@@ -26,7 +26,7 @@
     </header>
     <main class="main-section th-sample">
 <h1>Common Lisp の package について</h1>
-<p>2020-09-18</p>
+<p>2020-09-27</p>
 <p>この記事では, プログラミング言語Common Lispのpackageと呼ばれる概念について書きます.</p>
 <p>人に向けて書いている風の備忘録なので悪しからず.</p>
 <ul>
@@ -380,15 +380,93 @@ FOO&gt; (symbol-package 'bar)
 #&lt;PACKAGE &quot;FOO&quot;&gt;
 </code></pre>
 <p><code>shadow</code>は,
-第1引数に与えられたsymbolが第2引数で指定するpackage内に存在することを保証する状態にするものです.
+第1引数に与えられた名前を持つsymbolが,
+第2引数で指定するpackage内に存在することを保証する状態にするものです.
 第2引数を省略した場合にはcurrent packageになります.</p>
+<p>第1引数には名前を指定しますが, 文字列以外にも文字列指定子を用いることが出来ます.
+(この場合は先に書いたpackageの名前ではなくsymbolの名前として働く.)
+文字列で指定すると大文字小文字のことを考えないといけませんが,
+例のように, symbolを使うとそのsymbolの普段のコード中の表現を使えるので便利です.</p>
 <p>上の場合, symbol <code>bar</code>がpackage CL-USERに存在することになるので, <code>(defun bar () ...)</code>で<code>bar</code>が,
 package FOOに存在する<code>bar</code>ではなくて, <code>cl-user::bar</code>を指すことになります.</p>
 <p>これは, package CL-USERにおいて<code>cl-user::bar</code>が, 他のbarという名前を持つsymbolをまるで隠してしまうように振る舞います.
 (メモ: 実際の専門用語としてshadowingなのかmaskingなのか分かってないので, あとで調べる.)</p>
-<h2>import ここから書きかけ</h2>
+<h2>import</h2>
+<p>あるpackageに別のpackageにinternされているsymbolをinternする方法として, <code>use-package</code>を紹介しましたが,
+これでは, external symbolが全てinternされてしまいます.</p>
+<p>特定のsymbolのみ, あるいはinternal symbolをinternしたい場合には, <code>import</code>を使います.</p>
+<p>例を考えます.</p>
+<pre><code class="language-Lisp">CL-USER&gt; (defpackage :foo)
+#&lt;PACKAGE &quot;FOO&quot;&gt;
+CL-USER&gt; (in-package :foo)
+#&lt;COMMON-LISP:PACKAGE &quot;FOO&quot;&gt;
+FOO&gt; (cl:use-package :cl)
+T
+FOO&gt; (defun hoge () 0)
+HOGE
+FOO&gt; (defun piyo () 1)
+PIYO
+FOO&gt; (defun fuga () 2)
+FUGA
+FOO&gt; (export '(hoge piyo))
+T
+FOO&gt; (in-package :cl-user)
+#&lt;PACKAGE &quot;COMMON-LISP-USER&quot;&gt;
+CL-USER&gt; 
+</code></pre>
+<p>package FOOを作って, そこに<code>foo:hoge</code>, <code>foo:piyo</code>, <code>foo::fuga</code>がinternされています.
+<code>foo:hoge</code>, <code>foo:piyo</code>はexternalです.</p>
+<p><code>use-package</code>を使うと, externalである<code>foo:hoge</code>も<code>foo:piyo</code>もpackage CL-USERにinternされます.</p>
+<p><code>foo:piyo</code>だけinternしたい場合は, <code>import</code>を使います.</p>
+<pre><code class="language-Lisp">CL-USER&gt; (import 'foo:piyo)
+T
+CL-USER&gt; (piyo)
+1
+</code></pre>
+<p>current packageがCL-USERである時に, <code>'piyo</code>だと<code>CL-USER::PIYO</code>を指すので注意してください.</p>
+<p>externalではないsymbolも同様にinternすることが出来ます.</p>
+<pre><code class="language-Lisp">CL-USER&gt; (import 'foo::fuga) ; package FOOでfugaはinternalなのでコロンは2つ
+T
+CL-USER&gt; (fuga)
+2
+</code></pre>
 <h2>shadowing-import</h2>
+<p><code>shadow</code>はある名前のsymbolが指定するpackage(あるいはcurrent package)に存在することを保証しました.</p>
+<p>あるpackageで別のpackageのsymbolがinternされていることを保証したい場合もあります.</p>
+<p>例えば, ２つのpackageのexternal symbolを全てinternしてくることを考えて,
+そのうちいくつかの名前が重複しているような場合にどちらか一方のsymbolのみを選択してinternしたい時等です.</p>
+<p>どちらのpackageのexternal symbolも数個程度なら<code>import</code>を使うことも出来ますが,
+重複しているsymbolは数個なのに, external symbolは100個以上となると少々つらいです.</p>
+<p>そのような時には, <code>shadowing-import</code>を用います.</p>
+<p>先程の<code>import</code>の例の続きを考えます.</p>
+<pre><code class="language-Lisp">CL-USER&gt; (shadowing-import 'foo:hoge)
+T
+CL-USER&gt; (hoge)
+0
+CL-USER&gt; (defpackage :bar)
+#&lt;PACKAGE &quot;BAR&quot;&gt;
+CL-USER&gt; (in-package :bar)
+#&lt;COMMON-LISP:PACKAGE &quot;BAR&quot;&gt;
+BAR&gt; (cl:use-package :cl)
+T
+BAR&gt; (defun hoge () 3)
+HOGE
+BAR&gt; (export 'hoge)
+T
+BAR&gt; (in-package :cl-user)
+#&lt;PACKAGE &quot;COMMON-LISP-USER&quot;&gt;
+CL-USER&gt; (use-package :bar)
+T
+CL-USER&gt; (hoge)
+0
+</code></pre>
+<p><code>foo:hoge</code>を<code>shadowing-import</code>します.
+この状態で, 別のpackage(ここではBAR)で同名のsymbolをexternalにして, そのpackageを使います.</p>
+<p>HOGEという名前が重複するのですが,
+この状態ではpackage CL-USERでHOGEという名前は<code>foo:hoge</code>を示すことが決まった状態になっているので,
+衝突のエラーは出ずに, HOGEという名前で<code>bar:hoge</code>は参照できず, <code>foo:hoge</code>にアクセスできます.</p>
 <h2>defpackage</h2>
+<p>そのうち書く.</p>
 <h2>謝辞</h2>
 <p><a href="https://github.com/hyotang666">hyotang666</a> さん <code>use-package</code>に関する処理系依存の挙動について指摘をくださり, ありがとうございます.</p>
 <h2>参考文献</h2>

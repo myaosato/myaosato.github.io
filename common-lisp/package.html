@@ -26,7 +26,12 @@
     </header>
     <main class="main-section th-sample">
 <h1>Common Lisp の package について</h1>
-<p>2020-09-27</p>
+<h2>編集履歴</h2>
+<ul>
+<li>2020-10-09: いくつかの概念について誤解があったので, 修正</li>
+<li>2020-09-27</li>
+</ul>
+<h2>はじめに</h2>
 <p>この記事では, プログラミング言語Common Lispのpackageと呼ばれる概念について書きます.</p>
 <p>人に向けて書いている風の備忘録なので悪しからず.</p>
 <ul>
@@ -79,19 +84,19 @@ symbolというオブジェクト(データ)が関数や変数を指し示すた
 <p>あるpackage内でsymbolがアクセス出来る.
 と上で書きましたが, これは, そのあるpackageがcurrent packageである時にpackage prefixなしにsymbolを参照できることを指します.
 (package prefixについては後述します.)</p>
-<p>この時, symbolはそのpackageにinternされていると言います. (a symbol is interned in a package.)</p>
+<p>symbolをpackageに存在させることを, internすると言います.</p>
 <p>symbolが最初にinternされるpackageを, symbolのhome packageと呼びます.
 symbolはこのhome packageの情報を持ちます.</p>
-<p>このことをhome packageにsymbolが存在する(is present)ということもあります.</p>
-<p>これが上で挙げた3つ目の状態(あるpackageにsymbolが存在している)です.</p>
 <p>home packageは<code>symbol-package</code>で確認できます.</p>
 <pre><code class="language-Lisp">CL-USER&gt; (symbol-package 'pi)
 #&lt;PACKAGE &quot;COMMON-LISP&quot;&gt;
 </code></pre>
 <p>実は, home packageつまり<code>symbol-package</code>で確認できるpackageを変更することが出来ますが,
 ここではそのことは考えません.</p>
-<p>symbolは複数のpackageにinternされますが, symbolが存在するパッケージは高々一つです.</p>
-<p>またsymbolがinternされているpackageでは, symbolは名前(これはコード上の文字列です)で一意に識別出来ます.</p>
+<p>symbolは複数のpackageにinternされますが, symbolのhome packageは高々一つです.</p>
+<p>また,　symbolが最初にinternされると, packageにsymbolが存在する(is present)状態になります.</p>
+<p>これが上で挙げた3つ目の状態(あるpackageにsymbolが存在している)です.</p>
+<p>また, 言い換えになりますが, symbolがアクセス可能なpackageでは, symbolは名前(これはコード上の文字列です)で一意に識別出来ます.</p>
 <h2>package prefix</h2>
 <p>変数<code>PI</code>の例を見てみます.</p>
 <pre><code class="language-Lisp">CL-USER&gt; pi
@@ -110,8 +115,8 @@ CL-USER&gt; cl-user::pi
 symbolがinternalなのかexternalなのかによって動作が変わります.</p>
 <p>なお, このコロンのことをpackage markerと呼びます.</p>
 <h2>internal と external</h2>
-<p>symbolがpackageにinternされるということは既に書きました.</p>
-<p>packageにinternされているsymbolは2つの観点からそれぞれ, 2種類の状態があります.</p>
+<p>symbolがあるpackageでアクセス出来るということを話しました.</p>
+<p>アクセスできるsymbolは2つの観点からそれぞれ, 2種類の状態があります.</p>
 <p>1つ目の2種類は, 次の２つです.</p>
 <ul>
 <li>internal</li>
@@ -145,23 +150,29 @@ PI
 </code></pre>
 <p>このように第2引数を指定すると, current package以外のpackageでの扱いについて確認することも出来ます.</p>
 <h2>present と inherited</h2>
-<p>2つ目の観点はpackageに存在するsymbolかどうか.
-つまり, あるpackageがそのsymbolのhome packageであるかどうかということです.</p>
-<p>あるpackageにおいてsymbolは,</p>
+<p>2つ目の観点はpackageに存在するsymbolかどうかです.</p>
+<p>あるpackageでアクセス可能なsymbolは,</p>
 <ul>
 <li>present</li>
 <li>inherited</li>
 </ul>
-<p>のどちらかです. 上のpresentは既に紹介しました. inheritedというのはそうではない状態です.</p>
-<p>つまり, あるpackageからそのsymbolにアクセスは出来るが, そのsymbolのhome packageがそのpackageでは無いということです.
-これの例は, COMMON-LISP-USER packageにおける<code>PI</code>です.</p>
+<p>のどちらかです. </p>
+<p>あるpackageでアクセス出来るけれども, inheritedというのは別のpackageにsymbolが存在するという状態です.</p>
+<p>これの例は, COMMON-LISP-USER packageにおける<code>PI</code>です.</p>
 <pre><code class="language-Lisp">CL-USER&gt; *package*
 #&lt;PACKAGE &quot;COMMON-LISP-USER&quot;&gt;
-CL-USER&gt; (symbol-package 'pi)
-#&lt;PACKAGE &quot;COMMON-LISP&quot;&gt;
+CL-USER&gt; (intern &quot;PI&quot;)
+PI
+:INHERITED
 </code></pre>
 <p>current packageがCOMMON-LISP-USERであって, package prefixなしに参照は出来ますが,
-symbol <code>PI</code>のhome packageはCOMMON-LISPで, COMMON-LISP-USERではありません.</p>
+<code>intern</code>を用いると2つ目の返り値が<code>:INHERITED</code>となっています.
+package prefixなしに参照できる, つまりaccessibleではありますが,
+このsymbolはCOMMON-LISP-USERというpackageには存在していません.</p>
+<p>あとで紹介する<code>use-package</code>等によって, package(の持つ名前とsymbolの対応)間に継承関係を設定できます.</p>
+<p><code>PI</code>の例場合, package CL-USERがpackage CLを使っているという状態にあって,
+CLがCL-USERのuse listというものに含まれています.</p>
+<p>symbol <code>PI</code>はuse listを通してpackage CLから探されます.</p>
 <h2>defpackage</h2>
 <p>symbolとpackageの関係性をざっと説明しました.
 これらをどのように制御するのかということが, Common Lispにおけるpackage管理になります.</p>
@@ -203,9 +214,9 @@ FOO&gt; cl:*package*
 (&quot;CL-USER&quot;)
 </code></pre>
 <p>ここでcurrent packageがpackage FOOの時に, <code>cl:*package*</code>とpackage prefixをつけたのは,
-このsymbolがpackage FOOにinternされていないからです.</p>
-<p><code>defpackage</code>でpackageを作成する時に, どんなsymbolがinternされるかということは実装依存ですが,
-ここで用いている処理系(SBCL)ではどのsymbolもinternされていません.</p>
+このsymbolがpackage FOOでアクセス可能ではないからです.</p>
+<p><code>defpackage</code>でpackageを作成する時に, どんなsymbolがaccessibleになるかということは実装依存ですが,
+ここで用いている処理系(SBCL)ではどのsymbolもaccessibleになりません.</p>
 <h2>intern</h2>
 <p>symbolをpackageにinternしてみます. <code>cl:intern</code>を使ってみましょう.</p>
 <pre><code class="language-Lisp">CL-USER&gt; (defpackage :foo)
@@ -240,7 +251,7 @@ FUGA
 </code></pre>
 <h2>export</h2>
 <p>symbolはあるpackageに対してinternalとexternalという２つの種類の状態があると先に紹介しましたが,
-直前のin-packageの説明でsymbolがpackageにinternされてinternal symbolになるところは確認できました.</p>
+直前のinternの説明でsymbolがpackageにinternされてinternal symbolになるところは確認できました.</p>
 <p>これらをexternalにするには, <code>cl:export</code>を使います.</p>
 <pre><code class="language-Lisp">FOO&gt; (cl:export 'hoge)
 COMMON-LISP:T
@@ -267,9 +278,10 @@ CL-USER&gt; 'foo:hoge
 FOO:HOGE
 </code></pre>
 <h2>use-package</h2>
-<p>ところで, package CL-USERでは<code>in-package</code>や<code>defun</code>をpackage prefixなしに使っています.
-つまり, CL-USERに<code>cl:defun</code>や<code>cl:in-package</code>がinternされているということです.</p>
-<p><code>cl:use-packace</code>を使うと, あるpackageのexternal symbolを全てinternすることが出来ます.</p>
+<p>先にも<code>PI</code>の例について書きましたが,
+package CL-USERでは<code>in-package</code>や<code>defun</code>をpackage prefixなしに使っています.
+つまり, CL-USERで<code>cl:defun</code>や<code>cl:in-package</code>がアクセス可能ということです.</p>
+<p><code>cl:use-packace</code>を使うと, あるpackageのexternal symbolを全てアクセス可能にすることが出来ます.</p>
 <pre><code class="language-Lisp">CL-USER&gt; (in-package :foo)
 #&lt;COMMON-LISP:PACKAGE &quot;FOO&quot;&gt;
 FOO&gt; (cl:use-package :cl)
@@ -280,6 +292,7 @@ CL-USER&gt;
 </code></pre>
 <p>上の例では, package FOOに, package CL(package COMMON-LISP)のexternal symbol全てがinternされます.
 そのため<code>in-package</code>がpackage prefixなしで参照出来るようになりました.</p>
+<p>先にも書きましたが, このようにして,アクセス可能になったsymbolはinheritedであるといいます.</p>
 <p>これをpackage FOOがpackage CLを使うと言います.</p>
 <p>使っているpackageはpacakge-use-listで確認できます.</p>
 <pre><code class="language-Lisp">FOO&gt; (package-use-list :foo)
@@ -288,8 +301,8 @@ CL-USER&gt;
 <p>Common Lisp処理系を立ち上げると, current packageはpackage COMMON-LISP-USERになっています.
 package COMMON-LISP-USERは, package COMMON-LISPを使っています.</p>
 <h2>shadow</h2>
-<p>あるpackageのexternal symbolを別のpackageにinternする方法について, <code>use-package</code>を紹介しました.</p>
-<p>この方法では, external symbolを全てinternします.</p>
+<p>あるpackageのexternal symbolを別のpackageでアクセス可能にする方法について, <code>use-package</code>を紹介しました.</p>
+<p>この方法では, external symbolを全てアクセス可能にします.</p>
 <p>これだけでは, あるpackageを使いたいけれども, そのpackageのexternal symbol全てが必要ではないという場合.
 特に, あるsymbolについて同じ名前のsymbolを使いたい時に困ってしまいます.
 具体的には, 同じ名前の別の関数を定義したい場合などです.</p>
@@ -347,7 +360,7 @@ CL-USER&gt; (use-package :hoge)
 ;    [Condition of type NAME-CONFLICT]
 </code></pre>
 <p>前者の場合,
-package CL-USER内でbarがpackag FOOにinternされている<code>foo:bar</code>を指すということが問題なので,
+package CL-USER内でbarがpackag FOOに存在する<code>foo:bar</code>を指すということが問題なので,
 代わりに, package CL-USERに存在するsymbol <code>bar</code>を指すように出来ればうまく行きます.</p>
 <p>このような時には, <code>shadow</code>を使います.</p>
 <pre><code class="language-Lisp">CL-USER&gt; (defpackage :foo)
@@ -392,9 +405,9 @@ package FOOに存在する<code>bar</code>ではなくて, <code>cl-user::bar</c
 <p>これは, package CL-USERにおいて<code>cl-user::bar</code>が, 他のbarという名前を持つsymbolをまるで隠してしまうように振る舞います.
 (メモ: 実際の専門用語としてshadowingなのかmaskingなのか分かってないので, あとで調べる.)</p>
 <h2>import</h2>
-<p>あるpackageに別のpackageにinternされているsymbolをinternする方法として, <code>use-package</code>を紹介しましたが,
-これでは, external symbolが全てinternされてしまいます.</p>
-<p>特定のsymbolのみ, あるいはinternal symbolをinternしたい場合には, <code>import</code>を使います.</p>
+<p>あるpackageに別のpackageに存在するsymbolをアクセス可能にする方法として, <code>use-package</code>を紹介しましたが,
+これでは, external symbolが全てアクセス可能にされてしまいます.</p>
+<p>特定のsymbolのみ, あるいはinternal symbolをアクセス可能にしたい場合には, <code>import</code>を使います.</p>
 <p>例を考えます.</p>
 <pre><code class="language-Lisp">CL-USER&gt; (defpackage :foo)
 #&lt;PACKAGE &quot;FOO&quot;&gt;
@@ -414,27 +427,29 @@ FOO&gt; (in-package :cl-user)
 #&lt;PACKAGE &quot;COMMON-LISP-USER&quot;&gt;
 CL-USER&gt; 
 </code></pre>
-<p>package FOOを作って, そこに<code>foo:hoge</code>, <code>foo:piyo</code>, <code>foo::fuga</code>がinternされています.
+<p>package FOOを作って, そこに<code>foo:hoge</code>, <code>foo:piyo</code>, <code>foo::fuga</code>が存在しています.
 <code>foo:hoge</code>, <code>foo:piyo</code>はexternalです.</p>
-<p><code>use-package</code>を使うと, externalである<code>foo:hoge</code>も<code>foo:piyo</code>もpackage CL-USERにinternされます.</p>
-<p><code>foo:piyo</code>だけinternしたい場合は, <code>import</code>を使います.</p>
+<p><code>use-package</code>を使うと, externalである<code>foo:hoge</code>も<code>foo:piyo</code>もpackage CL-USERでアクセス可能になります.</p>
+<p><code>foo:piyo</code>だけアクセス可能にしたい場合は, <code>import</code>を使います.</p>
 <pre><code class="language-Lisp">CL-USER&gt; (import 'foo:piyo)
 T
 CL-USER&gt; (piyo)
 1
 </code></pre>
 <p>current packageがCL-USERである時に, <code>'piyo</code>だと<code>CL-USER::PIYO</code>を指すので注意してください.</p>
-<p>externalではないsymbolも同様にinternすることが出来ます.</p>
+<p>externalではないsymbolも同様にアクセス可能にすることが出来ます.</p>
 <pre><code class="language-Lisp">CL-USER&gt; (import 'foo::fuga) ; package FOOでfugaはinternalなのでコロンは2つ
 T
 CL-USER&gt; (fuga)
 2
 </code></pre>
+<p>また, <code>import</code>ではアクセス可能になるsymbolはinheritedではなくinternされます.</p>
 <h2>shadowing-import</h2>
 <p><code>shadow</code>はある名前のsymbolが指定するpackage(あるいはcurrent package)に存在することを保証しました.</p>
-<p>あるpackageで別のpackageのsymbolがinternされていることを保証したい場合もあります.</p>
-<p>例えば, ２つのpackageのexternal symbolを全てinternしてくることを考えて,
-そのうちいくつかの名前が重複しているような場合にどちらか一方のsymbolのみを選択してinternしたい時等です.</p>
+<p>あるpackageで別のpackageのsymbolがアクセス可能であることを保証したい場合もあります.</p>
+<p>例えば, ２つのpackageのexternal symbolを全てアクセス可能にする(2つのpackageをuseする)ことを考えて,
+そのうちいくつかの名前が重複しているような場合にどちらか一方のsymbolのみを選択して,
+アクセス可能にしたい時等です.</p>
 <p>どちらのpackageのexternal symbolも数個程度なら<code>import</code>を使うことも出来ますが,
 重複しているsymbolは数個なのに, external symbolは100個以上となると少々つらいです.</p>
 <p>そのような時には, <code>shadowing-import</code>を用います.</p>
@@ -465,10 +480,14 @@ CL-USER&gt; (hoge)
 <p>HOGEという名前が重複するのですが,
 この状態ではpackage CL-USERでHOGEという名前は<code>foo:hoge</code>を示すことが決まった状態になっているので,
 衝突のエラーは出ずに, HOGEという名前で<code>bar:hoge</code>は参照できず, <code>foo:hoge</code>にアクセスできます.</p>
+<p><code>shadowing-import</code>でも<code>import</code>と同様にsymbolはinternされます.</p>
 <h2>defpackage</h2>
 <p>そのうち書く.</p>
 <h2>謝辞</h2>
-<p><a href="https://github.com/hyotang666">hyotang666</a> さん <code>use-package</code>に関する処理系依存の挙動について指摘をくださり, ありがとうございます.</p>
+<ul>
+<li><a href="https://github.com/hyotang666">hyotang666</a>さん <code>use-package</code>に関する処理系依存の挙動について指摘をくださり, ありがとうございます.</li>
+<li><a href="https://github.com/t-sin">t-sin</a>さん internとinheritedについての私の誤解について指摘くださり, ありがとうございます.</li>
+</ul>
 <h2>参考文献</h2>
 <ul>
 <li><a href="http://www.lispworks.com/documentation/HyperSpec/Body/11_aa.htm">CLHS 11.1.1 Introduction to Packages</a></li>

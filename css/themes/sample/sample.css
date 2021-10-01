@@ -37,28 +37,11 @@ a:hover {
 
 /* unordered list */
 .th-sample ul {
-  list-style: none;
+  padding-left: 1em;
+  list-style-position: outside;
 }
-.th-sample ul li::before {
-  content: '-';
-  color: #6A4C9C;
-  font-weight: 700;
-  padding-right: 0.5em;
-  padding-left: 0.5em;
-}
-.th-sample ul ul li::before {
-  content: '-';
-  color: #6A4C9C;
-  font-weight: 700;
-  padding-right: 0.5em;
-  padding-left: 2.5em;
-}
-.th-sample ul ul ul li::before {
-  content: '-';
-  color: #6A4C9C;
-  font-weight: 700;
-  padding-right: 0.5em;
-  padding-left: 4.5em;
+.th-sample ul ul{
+  padding-left: 2em;
 }
 .th-sample :not(pre) code {
   background-color: #EEE;

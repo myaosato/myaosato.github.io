@@ -24,5 +24,5 @@ Common LispをはじめとするLISP系言語を用いたソフトウェア技�
 
 
 ### SNS
-- [GitHub myaosato](https://github.com/myaosato)
-- [X \@myao_s_moking](https://twitter.com/myao_s_moking)
+- [GitHub (myaosato)](https://github.com/myaosato)
+- [X (myao_s_moking)](https://twitter.com/myao_s_moking)

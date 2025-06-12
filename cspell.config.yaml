@@ -3,20 +3,20 @@ ignorePaths: []
 dictionaryDefinitions: []
 dictionaries: []
 words:
-- arrp
-- clcm
-- clhs
-- defpackage
-- defun
-- expt
-- fuga
-- hoge
-- myao_s_moking
-- myaosato
-- piyo
-- sbcl
-- setf
-- sicp
-- skyrim
+  - arrp
+  - clcm
+  - clhs
+  - defpackage
+  - defun
+  - expt
+  - fuga
+  - hoge
+  - myao_s_moking
+  - myaosato
+  - piyo
+  - sbcl
+  - setf
+  - sicp
+  - skyrim
 ignoreWords: []
 import: []

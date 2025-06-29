@@ -19,5 +19,7 @@ words:
   - sicp
   - skyrim
 ignoreWords:
-  - Berryman
+  - berryman
+  - gancarz
+  - kadokawa
 import: []

@@ -1,7 +1,7 @@
 # 訥弁日記
 
 ## 日記
-- [2025年 日記](/diary/2025/index.md)
+- [日記 2025年](/diary/2025/index.md)
 
 ## プログラミング関連
 - [Common Lispのpackageについて](/common-lisp-package.md)

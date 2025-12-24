@@ -18,6 +18,7 @@ words:
   - setf
   - sicp
   - skyrim
+  - wireshark
 ignoreWords:
   - berryman
   - gancarz

@@ -1,7 +1,9 @@
 # 訥弁日記
 
 ## Diary (日記)
+- [2026年](/diary/2026/index.md)
 - [2025年](/diary/2025/index.md)
+
 
 ## About me (著者について)
 - name: myaosato

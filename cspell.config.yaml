@@ -2,26 +2,33 @@ version: "0.2"
 ignorePaths: []
 dictionaryDefinitions: []
 dictionaries: []
-words:
+words: []
+ignoreWords:
+# myaosato (me)
   - arrp
-  - bridear
   - clcm
+  - myao_s_moking
+  - myaosato
+  # books
+  - alfanote
+  - kadokawa
+  # common lisp
   - clhs
   - defpackage
   - defun
   - expt
-  - fuga
-  - hoge
-  - myao_s_moking
-  - myaosato
-  - piyo
   - sbcl
   - setf
   - sicp
-  - skyrim
+  # software
   - wireshark
-ignoreWords:
-  - berryman
-  - gancarz
-  - kadokawa
+  # music
+  - bridear
+  - rolly
+  # programming
+  - fuga
+  - hoge
+  - piyo
+  # video game
+  - skyrim
 import: []

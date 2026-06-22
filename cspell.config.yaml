@@ -4,7 +4,7 @@ dictionaryDefinitions: []
 dictionaries: []
 words: []
 ignoreWords:
-# myaosato (me)
+  # myaosato (me)
   - arrp
   - clcm
   - myao_s_moking

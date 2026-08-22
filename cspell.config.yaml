@@ -31,4 +31,6 @@ ignoreWords:
   - piyo
   # video game
   - skyrim
+  # society
+  - srhr
 import: []
